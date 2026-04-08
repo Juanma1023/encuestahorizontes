@@ -154,6 +154,18 @@
     .field input:focus { border-color: var(--accent); }
     .field input::placeholder { color: var(--muted); }
 
+    .field select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+}
+
     /* Location box */
     .loc-card {
       background: var(--bg);
@@ -385,6 +397,45 @@
         <input type="email" id="email" placeholder="tu@correo.com" oninput="checkSteps()">
       </div>
 
+    <div class="field">
+  <label>Medio de transporte</label>
+  <select id="transporte" onchange="handleTransporte()">
+    <option value="">Selecciona una opción</option>
+    <option value="Automovil">Automóvil</option>
+    <option value="Motocicleta">Motocicleta</option>
+    <option value="Transporte Escolar">Transporte Escolar</option>
+    <option value="Bicicleta">Bicicleta</option>
+    <option value="Patineta Electrica">Patineta Eléctrica</option>
+  </select>
+</div>
+
+<div class="field" id="field-combustible" style="display:none;">
+  <label>Tipo de combustible</label>
+  <select id="combustible" onchange="checkSteps()">
+    <option value="">Selecciona combustible</option>
+    <option value="Diesel">Diésel</option>
+    <option value="Corriente">Corriente</option>
+    <option value="Electrico">Eléctrico</option>
+  </select>
+</div>
+
+<div class="field">
+  <label>¿Ingreso peatonal?</label>
+  <select id="peatonal" onchange="checkSteps()">
+    <option value="">Selecciona</option>
+    <option value="Si">Sí</option>
+    <option value="No">No</option>
+  </select>
+</div>
+
+<div class="field">
+  <label>Número de estudiantes por vehículo</label>
+  <input type="number" id="num_estudiantes" oninput="checkSteps()">
+</div>
+
+
+
+
       <div class="field">
         <label>Tu ubicación</label>
         <div class="loc-card" id="loc-card">
@@ -513,33 +564,77 @@
   }
 
   function checkSteps() {
-    const nombre = document.getElementById('nombre').value.trim();
-    const email  = document.getElementById('email').value.trim();
-    const s1 = document.getElementById('step1');
-    const s2 = document.getElementById('step2');
-    const s3 = document.getElementById('step3');
-    const l1 = document.getElementById('line1');
-    const l2 = document.getElementById('line2');
+  const nombre = document.getElementById('nombre').value.trim();
+  const email  = document.getElementById('email').value.trim();
+  const transporte = document.getElementById('transporte').value;
+  const combustible = document.getElementById('combustible').value;
+  const peatonal = document.getElementById('peatonal').value;
 
-    if (nombre && email) {
-      s1.className = 'step done';
-      s2.className = lat ? 'step done' : 'step active';
-      l1.className = 'step-line done';
-    } else {
-      s1.className = 'step active';
-      s2.className = 'step';
-      l1.className = 'step-line';
-    }
+  const requiereCombustible =
+    transporte === "Automovil" ||
+    transporte === "Motocicleta" ||
+    transporte === "Transporte Escolar";
 
-    if (lat) {
-      s2.className = 'step done';
-      s3.className = nombre && email ? 'step active' : 'step';
-      l2.className = nombre && email ? 'step-line done' : 'step-line';
-    }
+  const combustibleValido = !requiereCombustible || combustible;
 
-    const ready = nombre && email && lat;
-    document.getElementById('btn-submit').disabled = !ready;
+  const s1 = document.getElementById('step1');
+  const s2 = document.getElementById('step2');
+  const s3 = document.getElementById('step3');
+  const l1 = document.getElementById('line1');
+  const l2 = document.getElementById('line2');
+
+  // Paso 1 (datos básicos + transporte)
+  if (nombre && email && transporte && peatonal) {
+    s1.className = 'step done';
+    s2.className = lat ? 'step done' : 'step active';
+    l1.className = 'step-line done';
+  } else {
+    s1.className = 'step active';
+    s2.className = 'step';
+    l1.className = 'step-line';
   }
+
+  // Paso 2 (ubicación)
+  if (lat) {
+    s2.className = 'step done';
+    s3.className = (nombre && email && transporte && peatonal && combustibleValido)
+      ? 'step active'
+      : 'step';
+    l2.className = (nombre && email && transporte && peatonal && combustibleValido)
+      ? 'step-line done'
+      : 'step-line';
+  }
+
+  const ready =
+    nombre &&
+    email &&
+    transporte &&
+    peatonal &&
+    combustibleValido &&
+    lat;
+
+  document.getElementById('btn-submit').disabled = !ready;
+}
+
+  function handleTransporte() {
+  const transporte = document.getElementById('transporte').value;
+  const fieldComb  = document.getElementById('field-combustible');
+  const combSelect = document.getElementById('combustible');
+
+  combSelect.value = "";
+  fieldComb.style.display = "none";
+
+  if (transporte === "Automovil" || transporte === "Motocicleta") {
+    fieldComb.style.display = "block";
+  }
+
+  if (transporte === "Transporte Escolar") {
+    fieldComb.style.display = "block";
+    combSelect.value = "Diesel";
+  }
+
+  checkSteps();
+}
 
   async function submitForm() {
     const nombre = document.getElementById('nombre').value.trim();
@@ -548,18 +643,36 @@
     const spinner = document.getElementById('spinner');
     const btnText = document.getElementById('btn-text');
 
+    const transporte = document.getElementById('transporte').value;
+const combustible = document.getElementById('combustible').value;
+const peatonal = document.getElementById('peatonal').value;
+
+const requiereCombustible =
+  transporte === "Automovil" ||
+  transporte === "Motocicleta" ||
+  transporte === "Transporte Escolar";
+
+if (!nombre || !email || !transporte || !peatonal || (requiereCombustible && !combustible) || !lat) {
+  showToast();
+  return;
+}
+
     btn.disabled   = true;
     spinner.style.display = 'block';
     btnText.textContent   = 'Enviando…';
 
     const payload = {
-      nombre,
-      email,
-      lat,
-      lng,
-      accuracy,
-      timestamp: new Date().toISOString()
-    };
+  nombre,
+  email,
+  transporte: document.getElementById('transporte').value,
+  combustible: document.getElementById('combustible').value,
+  peatonal: document.getElementById('peatonal').value,
+  num_estudiantes: document.getElementById('num_estudiantes').value,
+  lat,
+  lng,
+  accuracy,
+  timestamp: new Date().toISOString()
+};
 
     try {
       await fetch(SCRIPT_URL, {
