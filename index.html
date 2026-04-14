@@ -403,12 +403,8 @@ function renderSec1() {
   <div class="sec-title">Cuéntanos sobre el estudiante</div>
 
   <div class="field">
-    <label>Nombre del acudiente o padre/madre <span class="req">*</span></label>
+    <label>Nombre completo del estudiante <span class="req">*</span></label>
     <input type="text" id="nombre" placeholder="Ej. María López" value="${ans.nombre||''}">
-  </div>
-  <div class="field">
-    <label>Correo electrónico <span class="req">*</span></label>
-    <input type="email" id="email" placeholder="tu@correo.com" value="${ans.email||''}">
   </div>
   <div class="row2">
     <div class="field">
@@ -418,17 +414,10 @@ function renderSec1() {
           .map(o=>`<option value="${o}" ${ans.grado===o?'selected':''}>${o}</option>`).join('')}
       </select>
     </div>
-    <div class="field">
-      <label>Días/semana que asiste <span class="req">*</span></label>
-      <select id="dias">
-        ${['— Días —','1','2','3','4','5']
-          .map(o=>`<option value="${o}" ${ans.dias===o?'selected':''}>${o}</option>`).join('')}
-      </select>
-    </div>
   </div>
   <div class="field">
     <label>Jornada de ingreso habitual <span class="req">*</span></label>
-    <div class="opts">${radioOpts('jornada',['Mañana (antes de las 8:00 am)','Tarde (después de las 12:00 pm)','Ambas jornadas'])}</div>
+    <div class="opts">${radioOpts('jornada',['Primaria (7:00 AM - 7:25 AM)','Secundaria (7:25 AM - 7:45 AM)'])}</div>
   </div>`;
 }
 
