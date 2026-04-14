@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Encuesta de Ubicación</title>
+  <title>Encuesta de Movilidad Escolar — ICMES</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -13,8 +13,9 @@
       --bg:       #0f0f13;
       --surface:  #18181f;
       --border:   #2a2a35;
-      --accent:   #6c63ff;
-      --accent2:  #ff6584;
+      --accent:   #1D9E75;
+      --accent2:  #97BC62;
+      --accent-d: #085041;
       --text:     #e8e8f0;
       --muted:    #7a7a90;
       --success:  #2dce89;
@@ -30,19 +31,18 @@
       color: var(--text);
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       padding: 2rem 1rem;
     }
 
-    /* Fondo con grid sutil */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(108,99,255,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(108,99,255,.04) 1px, transparent 1px);
+        linear-gradient(rgba(29,158,117,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29,158,117,.04) 1px, transparent 1px);
       background-size: 40px 40px;
       pointer-events: none;
       z-index: 0;
@@ -52,38 +52,26 @@
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
     }
 
     /* Header */
-    .header {
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-    .header .badge {
+    .header { margin-bottom: 2rem; text-align: center; }
+    .badge {
       display: inline-block;
       font-size: 11px;
       font-weight: 500;
       letter-spacing: .08em;
       text-transform: uppercase;
       color: var(--accent);
-      border: 1px solid rgba(108,99,255,.35);
+      border: 1px solid rgba(29,158,117,.35);
       border-radius: 20px;
-      padding: 4px 12px;
+      padding: 4px 14px;
       margin-bottom: 12px;
     }
-    .header h1 {
-      font-size: 26px;
-      font-weight: 300;
-      color: var(--text);
-      line-height: 1.3;
-    }
+    .header h1 { font-size: 24px; font-weight: 300; color: var(--text); line-height: 1.3; }
     .header h1 span { font-weight: 500; }
-    .header p {
-      margin-top: 8px;
-      font-size: 14px;
-      color: var(--muted);
-    }
+    .header p { margin-top: 8px; font-size: 13px; color: var(--muted); line-height: 1.6; }
 
     /* Card */
     .card {
@@ -91,23 +79,12 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 2rem;
+      margin-bottom: 1rem;
     }
 
-    /* Steps indicator */
-    .steps {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      margin-bottom: 2rem;
-    }
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--muted);
-      flex: 1;
-    }
+    /* Steps */
+    .steps { display: flex; align-items: center; margin-bottom: 2rem; }
+    .step { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
     .step.active { color: var(--text); }
     .step.done   { color: var(--success); }
     .step-num {
@@ -120,13 +97,25 @@
     }
     .step.active .step-num { border-color: var(--accent); color: var(--accent); }
     .step.done   .step-num { border-color: var(--success); background: var(--success); color: #fff; }
-    .step-line {
-      flex: 1; height: 1px;
-      background: var(--border);
-      margin: 0 6px;
-      transition: background .3s;
-    }
+    .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 4px; transition: background .3s; }
     .step-line.done { background: var(--success); }
+    .step-label { display: none; }
+    @media(min-width:420px){ .step-label { display: inline; } }
+
+    /* Section title inside card */
+    .sec-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(29,158,117,.25);
+      border-radius: 20px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
+    }
+    .sec-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 1.5rem; }
 
     /* Fields */
     .field { margin-bottom: 1.25rem; }
@@ -139,7 +128,8 @@
       text-transform: uppercase;
       margin-bottom: 6px;
     }
-    .field input {
+    .field label .req { color: var(--error); margin-left: 2px; }
+    .field input, .field select, .field textarea {
       width: 100%;
       background: var(--bg);
       border: 1px solid var(--border);
@@ -150,21 +140,49 @@
       color: var(--text);
       outline: none;
       transition: border-color .2s;
+      appearance: none;
     }
-    .field input:focus { border-color: var(--accent); }
-    .field input::placeholder { color: var(--muted); }
-
     .field select {
-  width: 100%;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 11px 14px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  outline: none;
-}
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a90' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    .field select option { background: #18181f; }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--muted); }
+    .field .helper { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+    /* Row grid */
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+    /* Radio / checkbox options */
+    .opts { display: flex; flex-direction: column; gap: .45rem; }
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      padding: 10px 13px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      user-select: none;
+    }
+    .opt:hover { border-color: rgba(29,158,117,.5); background: rgba(29,158,117,.04); }
+    .opt.selected { border-color: var(--accent); background: rgba(29,158,117,.08); }
+    .opt input[type=radio], .opt input[type=checkbox] {
+      width: 16px; height: 16px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+    .opt-label { font-size: 13px; color: var(--text); line-height: 1.4; }
 
     /* Location box */
     .loc-card {
@@ -176,535 +194,657 @@
     }
     .loc-card.ok    { border-color: rgba(45,206,137,.4); }
     .loc-card.error { border-color: rgba(240,82,82,.4); }
-
-    .loc-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .loc-header { display: flex; align-items: center; gap: 10px; }
     .pulse-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--border);
-      flex-shrink: 0;
-      transition: background .3s;
-      position: relative;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--border); flex-shrink: 0;
+      transition: background .3s; position: relative;
     }
-    .pulse-dot.loading {
-      background: var(--warn);
-      animation: blink .8s ease-in-out infinite alternate;
-    }
-    .pulse-dot.ok {
-      background: var(--success);
-    }
+    .pulse-dot.loading { background: var(--warn); animation: blink .8s ease-in-out infinite alternate; }
+    .pulse-dot.ok { background: var(--success); }
     .pulse-dot.ok::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      border: 1.5px solid var(--success);
+      content: ''; position: absolute; inset: -4px;
+      border-radius: 50%; border: 1.5px solid var(--success);
       animation: ripple 1.2s ease-out infinite;
     }
     .pulse-dot.error { background: var(--error); }
-
     @keyframes blink  { to { opacity: .3; } }
-    @keyframes ripple {
-      0%   { transform: scale(1); opacity: .6; }
-      100% { transform: scale(2.4); opacity: 0; }
-    }
+    @keyframes ripple { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(2.4); opacity: 0; } }
 
     .loc-status { font-size: 13px; color: var(--muted); }
     .loc-status.ok { color: var(--success); }
     .loc-status.error { color: var(--error); }
-
-    .coords-row {
-      display: none;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-      gap: 8px;
-    }
-    .coords-row.visible { display: flex; flex-wrap: wrap; }
+    .coords-row { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); gap: 8px; flex-wrap: wrap; }
+    .coords-row.visible { display: flex; }
     .coord-chip {
-      font-family: var(--mono);
-      font-size: 11px;
-      background: rgba(108,99,255,.1);
-      border: 1px solid rgba(108,99,255,.2);
-      color: var(--accent);
-      border-radius: 6px;
-      padding: 4px 9px;
+      font-family: var(--mono); font-size: 11px;
+      background: rgba(29,158,117,.1); border: 1px solid rgba(29,158,117,.2);
+      color: var(--accent); border-radius: 6px; padding: 4px 9px;
     }
     .coord-chip.acc {
-      background: rgba(244,162,52,.08);
-      border-color: rgba(244,162,52,.2);
-      color: var(--warn);
+      background: rgba(244,162,52,.08); border-color: rgba(244,162,52,.2); color: var(--warn);
     }
-
     .btn-loc {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      background: transparent;
-      border: 1.5px dashed var(--border);
-      border-radius: 10px;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      cursor: pointer;
-      transition: border-color .2s, color .2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; margin-top: 10px; padding: 10px;
+      background: transparent; border: 1.5px dashed var(--border);
+      border-radius: 10px; color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      cursor: pointer; transition: border-color .2s, color .2s;
     }
     .btn-loc:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* Pin icon SVG */
-    .pin-icon { width: 14px; height: 14px; }
-
-    /* Privacy note */
+    .btn-loc:disabled { opacity: .4; cursor: not-allowed; }
     .privacy {
-      display: flex;
-      align-items: flex-start;
-      gap: 7px;
-      margin-top: 8px;
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 7px;
+      margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.5;
     }
-    .privacy svg { width: 12px; height: 12px; flex-shrink: 0; margin-top: 1px; opacity: .5; }
 
     /* Divider */
     .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 
-    /* Submit */
-    .btn-submit {
-      width: 100%;
-      padding: 13px;
-      background: var(--accent);
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: opacity .2s, transform .1s;
+    /* Nav buttons */
+    .nav { display: flex; gap: .75rem; margin-top: 1.5rem; }
+    .btn-back {
+      padding: 12px 20px;
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 10px; color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      cursor: pointer; transition: border-color .2s, color .2s;
+      flex-shrink: 0;
+    }
+    .btn-back:hover { border-color: var(--muted); color: var(--text); }
+    .btn-next {
+      flex: 1; padding: 12px;
+      background: var(--accent); color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      border: none; border-radius: 10px;
+      cursor: pointer; transition: opacity .2s;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .btn-submit:hover:not(:disabled) { opacity: .9; }
-    .btn-submit:active:not(:disabled) { transform: scale(.99); }
-    .btn-submit:disabled { opacity: .35; cursor: not-allowed; }
+    .btn-next:hover:not(:disabled) { opacity: .88; }
+    .btn-next:disabled { opacity: .35; cursor: not-allowed; }
 
     /* Spinner */
     .spinner {
       width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .6s linear infinite;
-      display: none;
+      border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin .6s linear infinite; display: none;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Success screen */
-    #success-screen {
-      display: none;
-      text-align: center;
-      padding: 1rem 0;
-    }
+    /* Success */
+    .success-screen { text-align: center; padding: 1rem 0; }
     .success-icon {
       width: 64px; height: 64px;
-      background: rgba(45,206,137,.1);
-      border: 1.5px solid rgba(45,206,137,.3);
-      border-radius: 50%;
-      margin: 0 auto 1.25rem;
+      background: rgba(45,206,137,.1); border: 1.5px solid rgba(45,206,137,.3);
+      border-radius: 50%; margin: 0 auto 1.25rem;
       display: flex; align-items: center; justify-content: center;
     }
-    .success-icon svg { width: 28px; height: 28px; color: var(--success); }
-    #success-screen h2 { font-size: 20px; font-weight: 400; margin-bottom: 8px; }
-    #success-screen p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .map-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 16px;
-      font-size: 12px;
-      color: var(--accent);
-      text-decoration: none;
-      border: 1px solid rgba(108,99,255,.3);
-      border-radius: 8px;
-      padding: 7px 14px;
-      transition: background .2s;
+    .success-screen h2 { font-size: 20px; font-weight: 400; margin-bottom: 8px; }
+    .success-screen p  { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+    .data-box {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem;
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+      white-space: pre-wrap; text-align: left;
+      max-height: 240px; overflow-y: auto; margin-bottom: 1rem;
     }
-    .map-link:hover { background: rgba(108,99,255,.08); }
+    .btn-copy {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 16px; background: transparent;
+      border: 1px solid rgba(29,158,117,.35); border-radius: 9px;
+      color: var(--accent); font-family: 'DM Sans', sans-serif; font-size: 13px;
+      cursor: pointer; transition: background .2s;
+    }
+    .btn-copy:hover { background: rgba(29,158,117,.08); }
+    .btn-new {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-left: .75rem; padding: 9px 16px;
+      background: var(--accent); border: none; border-radius: 9px;
+      color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px;
+      cursor: pointer; transition: opacity .2s;
+    }
+    .btn-new:hover { opacity: .88; }
 
-    /* Error toast */
+    /* Toast */
     #toast {
-      position: fixed;
-      bottom: 24px; left: 50%;
+      position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: #1e1e2a;
-      border: 1px solid var(--error);
-      color: var(--error);
-      font-size: 13px;
-      padding: 10px 18px;
-      border-radius: 10px;
-      transition: transform .3s;
-      z-index: 100;
-      white-space: nowrap;
+      background: #1e1e2a; border: 1px solid var(--error);
+      color: var(--error); font-size: 13px;
+      padding: 10px 18px; border-radius: 10px;
+      transition: transform .3s; z-index: 100; white-space: nowrap;
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Progress */
+    .progress-wrap { background: var(--border); border-radius: 4px; height: 3px; margin-bottom: 1.5rem; }
+    .progress-fill { background: var(--accent); height: 3px; border-radius: 4px; transition: width .4s; }
   </style>
 </head>
 <body>
 
 <div class="container">
   <div class="header">
-    <div class="badge">📍 Encuesta de ubicación</div>
-    <h1>Cuéntanos <span>dónde estás</span></h1>
-    <p>Capturamos tu ubicación automáticamente, sin que tengas que escribir tu dirección.</p>
+    <div class="badge">Movilidad Escolar · ICMES</div>
+    <h1>Encuesta de <span>movilidad sostenible</span></h1>
+    <p>Colegio Campestre Horizontes &mdash; Línea 2 Sostenibilidad<br>
+    Tus respuestas alimentan el Sistema Inteligente de Movilidad Escolar.</p>
   </div>
 
   <div class="card">
-
     <!-- Steps -->
-    <div class="steps">
-      <div class="step active" id="step1">
-        <div class="step-num">1</div>
-        <span>Datos</span>
-      </div>
-      <div class="step-line" id="line1"></div>
-      <div class="step" id="step2">
-        <div class="step-num">2</div>
-        <span>Ubicación</span>
-      </div>
-      <div class="step-line" id="line2"></div>
-      <div class="step" id="step3">
-        <div class="step-num">3</div>
-        <span>Enviar</span>
-      </div>
-    </div>
+    <div class="steps" id="steps-bar"></div>
 
-    <!-- Form -->
-    <div id="form-content">
-      <div class="field">
-        <label>Nombre completo</label>
-        <input type="text" id="nombre" placeholder="Ej. María López" oninput="checkSteps()">
-      </div>
-      <div class="field">
-        <label>Correo electrónico</label>
-        <input type="email" id="email" placeholder="tu@correo.com" oninput="checkSteps()">
-      </div>
+    <!-- Progress -->
+    <div class="progress-wrap"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
 
-    <div class="field">
-  <label>Medio de transporte</label>
-  <select id="transporte" onchange="handleTransporte()">
-    <option value="">Selecciona una opción</option>
-    <option value="Automovil">Automóvil</option>
-    <option value="Motocicleta">Motocicleta</option>
-    <option value="Transporte Escolar">Transporte Escolar</option>
-    <option value="Bicicleta">Bicicleta</option>
-    <option value="Patineta Electrica">Patineta Eléctrica</option>
-  </select>
-</div>
+    <!-- Dynamic content -->
+    <div id="form-area"></div>
 
-<div class="field" id="field-combustible" style="display:none;">
-  <label>Tipo de combustible</label>
-  <select id="combustible" onchange="checkSteps()">
-    <option value="">Selecciona combustible</option>
-    <option value="Diesel">Diésel</option>
-    <option value="Corriente">Corriente</option>
-    <option value="Electrico">Eléctrico</option>
-  </select>
-</div>
-
-<div class="field">
-  <label>¿Ingreso peatonal?</label>
-  <select id="peatonal" onchange="checkSteps()">
-    <option value="">Selecciona</option>
-    <option value="Si">Sí</option>
-    <option value="No">No</option>
-  </select>
-</div>
-
-<div class="field">
-  <label>Número de estudiantes por vehículo</label>
-  <input type="number" id="num_estudiantes" oninput="checkSteps()">
-</div>
-
-
-
-
-      <div class="field">
-        <label>Tu ubicación</label>
-        <div class="loc-card" id="loc-card">
-          <div class="loc-header">
-            <div class="pulse-dot" id="loc-dot"></div>
-            <span class="loc-status" id="loc-status">Aún no hemos capturado tu ubicación</span>
-          </div>
-          <div class="coords-row" id="coords-row">
-            <span class="coord-chip" id="chip-lat">Lat: —</span>
-            <span class="coord-chip" id="chip-lng">Lng: —</span>
-            <span class="coord-chip acc" id="chip-acc">Precisión: —</span>
-          </div>
-        </div>
-        <button class="btn-loc" onclick="getLocation()" id="btn-loc">
-          <svg class="pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-            <circle cx="12" cy="9" r="2.5"/>
-          </svg>
-          Capturar mi ubicación con GPS
-        </button>
-        <div class="privacy">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-          </svg>
-          Tus coordenadas solo se usan con fines estadísticos. No se comparten con terceros.
-        </div>
-      </div>
-
-      <hr class="divider">
-
-      <button class="btn-submit" id="btn-submit" onclick="submitForm()" disabled>
-        <span id="btn-text">Enviar respuesta</span>
+    <!-- Nav -->
+    <div class="nav" id="nav-area">
+      <button class="btn-back" id="btn-back" style="display:none" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" id="btn-next" onclick="goNext()">
+        <span id="btn-label">Continuar</span>
         <div class="spinner" id="spinner"></div>
       </button>
     </div>
-
-    <!-- Success -->
-    <div id="success-screen">
-      <div class="success-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
-      </div>
-      <h2>¡Respuesta enviada!</h2>
-      <p id="success-msg">Tu ubicación fue registrada correctamente.</p>
-      <a href="#" target="_blank" id="maps-link" class="map-link">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-        </svg>
-        Ver en Google Maps
-      </a>
-    </div>
-
   </div>
 </div>
 
-<div id="toast">⚠ Error al enviar. Intenta de nuevo.</div>
+<div id="toast">Error al procesar. Intenta de nuevo.</div>
 
 <script>
-  // =====================================================
-  //  REEMPLAZA ESTA URL con la de tu Google Apps Script
-  //  (la obtienes en el Paso 2 de la guía)
-  // =====================================================
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzj_Zgc7UO8iFPyb3tbqkLUKSvakpxO2zpMsj0uQ1BLrR_b2BJH6JiuWeXASYK-c-EmrA/exec";
+// ── CONFIGURACIÓN ──────────────────────────────────────────────────────────────
+// Reemplaza con tu Google Apps Script URL para guardar en Google Sheets
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzj_Zgc7UO8iFPyb3tbqkLUKSvakpxO2zpMsj0uQ1BLrR_b2BJH6JiuWeXASYK-c-EmrA/exec";
 
-  let lat = null, lng = null, accuracy = null;
+// ── ESTADO ─────────────────────────────────────────────────────────────────────
+let step = 0;
+let ans  = {};
+let gpsLat = null, gpsLng = null, gpsAcc = null;
 
-  function getLocation() {
-    const dot    = document.getElementById('loc-dot');
-    const status = document.getElementById('loc-status');
-    const card   = document.getElementById('loc-card');
-    const btnLoc = document.getElementById('btn-loc');
+// ── SECCIONES ──────────────────────────────────────────────────────────────────
+const STEPS = [
+  { label: 'Estudiante' },
+  { label: 'Ubicación' },
+  { label: 'Transporte' },
+  { label: 'Bahía' },
+  { label: 'Sostenibilidad' },
+  { label: 'Enviar' },
+];
 
-    dot.className   = 'pulse-dot loading';
-    status.className = 'loc-status';
-    status.textContent = 'Obteniendo tu ubicación…';
-    card.className  = 'loc-card';
-    btnLoc.disabled = true;
-
-    if (!navigator.geolocation) {
-      setLocError('Tu navegador no soporta geolocalización.');
-      return;
+// ── RENDER STEPS BAR ───────────────────────────────────────────────────────────
+function renderSteps() {
+  const bar = document.getElementById('steps-bar');
+  let html = '';
+  STEPS.forEach((s, i) => {
+    const cls = i < step ? 'done' : i === step ? 'active' : '';
+    html += `<div class="step ${cls}">
+      <div class="step-num">${i < step ? '✓' : i+1}</div>
+      <span class="step-label">${s.label}</span>
+    </div>`;
+    if (i < STEPS.length - 1) {
+      html += `<div class="step-line${i < step ? ' done' : ''}"></div>`;
     }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        lat      = pos.coords.latitude.toFixed(6);
-        lng      = pos.coords.longitude.toFixed(6);
-        accuracy = Math.round(pos.coords.accuracy);
-
-        dot.className    = 'pulse-dot ok';
-        status.className = 'loc-status ok';
-        status.textContent = 'Ubicación capturada ✓';
-        card.className   = 'loc-card ok';
-        btnLoc.textContent = '↻ Volver a capturar';
-        btnLoc.disabled  = false;
-
-        document.getElementById('chip-lat').textContent = `Lat: ${lat}`;
-        document.getElementById('chip-lng').textContent = `Lng: ${lng}`;
-        document.getElementById('chip-acc').textContent = `Precisión: ±${accuracy}m`;
-        document.getElementById('coords-row').classList.add('visible');
-
-        checkSteps();
-      },
-      (err) => {
-        const msgs = {
-          1: 'Permiso denegado. Permite el acceso en la configuración de tu navegador.',
-          2: 'No se pudo determinar la ubicación.',
-          3: 'Tiempo de espera agotado. Intenta de nuevo.'
-        };
-        setLocError(msgs[err.code] || 'Error desconocido.');
-        btnLoc.disabled = false;
-      },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-    );
-  }
-
-  function setLocError(msg) {
-    const dot    = document.getElementById('loc-dot');
-    const status = document.getElementById('loc-status');
-    const card   = document.getElementById('loc-card');
-    dot.className    = 'pulse-dot error';
-    status.className = 'loc-status error';
-    status.textContent = msg;
-    card.className   = 'loc-card error';
-  }
-
-  function checkSteps() {
-  const nombre = document.getElementById('nombre').value.trim();
-  const email  = document.getElementById('email').value.trim();
-  const transporte = document.getElementById('transporte').value;
-  const combustible = document.getElementById('combustible').value;
-  const peatonal = document.getElementById('peatonal').value;
-
-  const requiereCombustible =
-    transporte === "Automovil" ||
-    transporte === "Motocicleta" ||
-    transporte === "Transporte Escolar";
-
-  const combustibleValido = !requiereCombustible || combustible;
-
-  const s1 = document.getElementById('step1');
-  const s2 = document.getElementById('step2');
-  const s3 = document.getElementById('step3');
-  const l1 = document.getElementById('line1');
-  const l2 = document.getElementById('line2');
-
-  // Paso 1 (datos básicos + transporte)
-  if (nombre && email && transporte && peatonal) {
-    s1.className = 'step done';
-    s2.className = lat ? 'step done' : 'step active';
-    l1.className = 'step-line done';
-  } else {
-    s1.className = 'step active';
-    s2.className = 'step';
-    l1.className = 'step-line';
-  }
-
-  // Paso 2 (ubicación)
-  if (lat) {
-    s2.className = 'step done';
-    s3.className = (nombre && email && transporte && peatonal && combustibleValido)
-      ? 'step active'
-      : 'step';
-    l2.className = (nombre && email && transporte && peatonal && combustibleValido)
-      ? 'step-line done'
-      : 'step-line';
-  }
-
-  const ready =
-    nombre &&
-    email &&
-    transporte &&
-    peatonal &&
-    combustibleValido &&
-    lat;
-
-  document.getElementById('btn-submit').disabled = !ready;
+  });
+  bar.innerHTML = html;
 }
 
-  function handleTransporte() {
-  const transporte = document.getElementById('transporte').value;
-  const fieldComb  = document.getElementById('field-combustible');
-  const combSelect = document.getElementById('combustible');
-
-  combSelect.value = "";
-  fieldComb.style.display = "none";
-
-  if (transporte === "Automovil" || transporte === "Motocicleta") {
-    fieldComb.style.display = "block";
-  }
-
-  if (transporte === "Transporte Escolar") {
-    fieldComb.style.display = "block";
-    combSelect.value = "Diesel";
-  }
-
-  checkSteps();
+function updateProgress() {
+  document.getElementById('pbar').style.width = Math.round((step / (STEPS.length - 1)) * 100) + '%';
 }
 
-  async function submitForm() {
-    const nombre = document.getElementById('nombre').value.trim();
-    const email  = document.getElementById('email').value.trim();
-    const btn    = document.getElementById('btn-submit');
-    const spinner = document.getElementById('spinner');
-    const btnText = document.getElementById('btn-text');
+// ── SECCIÓN 1: DATOS ESTUDIANTE ────────────────────────────────────────────────
+function renderSec1() {
+  return `
+  <div class="sec-tag">01 · Datos del estudiante</div>
+  <div class="sec-title">Cuéntanos sobre el estudiante</div>
 
-    const transporte = document.getElementById('transporte').value;
-const combustible = document.getElementById('combustible').value;
-const peatonal = document.getElementById('peatonal').value;
-
-const requiereCombustible =
-  transporte === "Automovil" ||
-  transporte === "Motocicleta" ||
-  transporte === "Transporte Escolar";
-
-if (!nombre || !email || !transporte || !peatonal || (requiereCombustible && !combustible) || !lat) {
-  showToast();
-  return;
+  <div class="field">
+    <label>Nombre del acudiente o padre/madre <span class="req">*</span></label>
+    <input type="text" id="nombre" placeholder="Ej. María López" value="${ans.nombre||''}">
+  </div>
+  <div class="field">
+    <label>Correo electrónico <span class="req">*</span></label>
+    <input type="email" id="email" placeholder="tu@correo.com" value="${ans.email||''}">
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label>Grado del estudiante <span class="req">*</span></label>
+      <select id="grado">
+        ${['— Grado —','Preescolar','1°','2°','3°','4°','5°','6°','7°','8°','9°','10°','11°']
+          .map(o=>`<option value="${o}" ${ans.grado===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field">
+      <label>Días/semana que asiste <span class="req">*</span></label>
+      <select id="dias">
+        ${['— Días —','1','2','3','4','5']
+          .map(o=>`<option value="${o}" ${ans.dias===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label>Jornada de ingreso habitual <span class="req">*</span></label>
+    <div class="opts">${radioOpts('jornada',['Mañana (antes de las 8:00 am)','Tarde (después de las 12:00 pm)','Ambas jornadas'])}</div>
+  </div>`;
 }
 
-    btn.disabled   = true;
-    spinner.style.display = 'block';
-    btnText.textContent   = 'Enviando…';
+// ── SECCIÓN 2: UBICACIÓN + GPS ─────────────────────────────────────────────────
+function renderSec2() {
+  const hasGps = gpsLat !== null;
+  return `
+  <div class="sec-tag">02 · Ubicación y distancia</div>
+  <div class="sec-title">¿Desde dónde viaja el estudiante?</div>
 
-    const payload = {
-  nombre,
-  email,
-  transporte: document.getElementById('transporte').value,
-  combustible: document.getElementById('combustible').value,
-  peatonal: document.getElementById('peatonal').value,
-  num_estudiantes: document.getElementById('num_estudiantes').value,
-  lat,
-  lng,
-  accuracy,
-  timestamp: new Date().toISOString()
-};
+  <div class="row2">
+    <div class="field">
+      <label>Municipio <span class="req">*</span></label>
+      <input type="text" id="municipio" placeholder="Ej. La Ceja" value="${ans.municipio||''}">
+    </div>
+    <div class="field">
+      <label>Barrio / sector <span class="req">*</span></label>
+      <input type="text" id="barrio" placeholder="Ej. El Porvenir" value="${ans.barrio||''}">
+    </div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label>Tiempo de viaje (minutos) <span class="req">*</span></label>
+      <input type="number" id="tiempo_min" placeholder="Ej. 20" min="1" max="180" step="1" value="${ans.tiempo_min||''}">
+    </div>
+    <div class="field">
+      <label>Distancia aprox. (km)</label>
+      <input type="number" id="km_aprox" placeholder="Ej. 4.5" min="0" step="0.1" value="${ans.km_aprox||''}">
+      <div class="helper">Puedes estimarla en Google Maps</div>
+    </div>
+  </div>
 
-    try {
+  <div class="field">
+    <label>Ubicación GPS (punto de origen)</label>
+    <div class="loc-card${hasGps?' ok':''}" id="loc-card">
+      <div class="loc-header">
+        <div class="pulse-dot${hasGps?' ok':''}" id="loc-dot"></div>
+        <span class="loc-status${hasGps?' ok':''}" id="loc-status">
+          ${hasGps ? 'Ubicación capturada ✓' : 'Aún no hemos capturado tu ubicación'}
+        </span>
+      </div>
+      <div class="coords-row${hasGps?' visible':''}" id="coords-row">
+        <span class="coord-chip" id="chip-lat">Lat: ${hasGps?gpsLat:'—'}</span>
+        <span class="coord-chip" id="chip-lng">Lng: ${hasGps?gpsLng:'—'}</span>
+        <span class="coord-chip acc" id="chip-acc">Precisión: ${hasGps?'±'+gpsAcc+'m':'—'}</span>
+      </div>
+    </div>
+    <button class="btn-loc" onclick="getLocation()" id="btn-loc">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+        <circle cx="12" cy="9" r="2.5"/>
+      </svg>
+      ${hasGps ? '↻ Volver a capturar' : 'Capturar ubicación con GPS'}
+    </button>
+    <div class="privacy">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;opacity:.5">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+      </svg>
+      Las coordenadas se usan solo con fines estadísticos para el proyecto ICMES. No se comparten con terceros.
+    </div>
+  </div>`;
+}
+
+// ── SECCIÓN 3: TRANSPORTE ──────────────────────────────────────────────────────
+function renderSec3() {
+  return `
+  <div class="sec-tag">03 · Modalidad de transporte</div>
+  <div class="sec-title">¿Cómo llega el estudiante al colegio?</div>
+
+  <div class="field">
+    <label>Medio de transporte habitual <span class="req">*</span></label>
+    <div class="opts">${radioOpts('modalidad',['Vehículo particular (carro o moto)','Transporte escolar (ruta contratada)','Transporte público (bus, colectivo)','A pie / caminando','Bicicleta o patineta eléctrica'])}</div>
+  </div>
+
+  <div class="field">
+    <label>Tipo de combustible del vehículo</label>
+    <div class="opts">${radioOpts('combustible',['Gasolina','Diésel','Gas natural vehicular (GNV)','Eléctrico','Híbrido','No aplica — no usa vehículo'])}</div>
+  </div>
+
+  <div class="field">
+    <label>¿Cuántos estudiantes viajan en el mismo vehículo? <span class="req">*</span></label>
+    <select id="estudiantes_vehiculo">
+      ${['— Selecciona —','Solo el estudiante (1)','2 estudiantes','3 estudiantes','4 o más estudiantes','No aplica — no usa vehículo']
+        .map(o=>`<option value="${o}" ${ans.estudiantes_vehiculo===o?'selected':''}>${o}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="field">
+    <label>¿Comparte el vehículo con estudiantes de otros colegios?</label>
+    <div class="opts">${radioOpts('comparte_otros',['Sí','No','No aplica'])}</div>
+  </div>`;
+}
+
+// ── SECCIÓN 4: BAHÍA ───────────────────────────────────────────────────────────
+function renderSec4() {
+  return `
+  <div class="sec-tag">04 · Experiencia en la bahía</div>
+  <div class="sec-title">Tiempos de espera y congestión</div>
+
+  <div class="field">
+    <label>¿El vehículo ingresa a la bahía del colegio? <span class="req">*</span></label>
+    <div class="opts">${radioOpts('usa_bahia',['Sí, siempre','A veces','No, deja al estudiante en otro punto'])}</div>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Espera antes de ingresar (mañana)</label>
+      <select id="espera_ingreso">
+        ${['— Selecciona —','Menos de 5 min','5 a 10 min','10 a 20 min','Más de 20 min','No aplica']
+          .map(o=>`<option value="${o}" ${ans.espera_ingreso===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field">
+      <label>Espera al recoger (tarde/salida)</label>
+      <select id="espera_salida">
+        ${['— Selecciona —','Menos de 5 min','5 a 10 min','10 a 20 min','Más de 20 min','No aplica']
+          .map(o=>`<option value="${o}" ${ans.espera_salida===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>¿Percibe congestión vehicular en el acceso al colegio? <span class="req">*</span></label>
+    <div class="opts">${radioOpts('congestion',['Sí, siempre','Frecuentemente','Pocas veces','Nunca'])}</div>
+  </div>
+
+  <div class="field">
+    <label>Observaciones sobre la bahía</label>
+    <textarea id="obs_bahia" placeholder="Comentarios, situaciones recurrentes, sugerencias…">${ans.obs_bahia||''}</textarea>
+  </div>`;
+}
+
+// ── SECCIÓN 5: SOSTENIBILIDAD ──────────────────────────────────────────────────
+function renderSec5() {
+  return `
+  <div class="sec-tag">05 · Sostenibilidad y cambio</div>
+  <div class="sec-title">Disposición y percepción ambiental</div>
+
+  <div class="field">
+    <label>¿Estaría dispuesto/a a usar una ruta escolar compartida optimizada? <span class="req">*</span></label>
+    <div class="opts">${radioOpts('interes_ruta',['Sí, definitivamente','Posiblemente, si la ruta es conveniente','No, prefiero el vehículo particular','Ya usa ruta escolar'])}</div>
+  </div>
+
+  <div class="field">
+    <label>¿Usaría un punto de encuentro cercano a su hogar para tomar la ruta?</label>
+    <div class="opts">${radioOpts('punto_encuentro',['Sí','Depende de la distancia al punto','No'])}</div>
+  </div>
+
+  <div class="field">
+    <label>¿Qué tan importante es para usted reducir la huella de carbono de la movilidad escolar? <span class="req">*</span></label>
+    <div class="opts">${radioOpts('importancia_huella',['Muy importante','Importante','Poco importante','No lo había considerado'])}</div>
+  </div>
+
+  <div class="field">
+    <label>Comentarios adicionales</label>
+    <textarea id="comentarios" placeholder="Sugerencias, inquietudes o información relevante para el proyecto…">${ans.comentarios||''}</textarea>
+  </div>`;
+}
+
+// ── PANTALLA DE ÉXITO ──────────────────────────────────────────────────────────
+function renderSuccess() {
+  const ts = new Date().toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' });
+  const payload = buildPayload(ts);
+  const json = JSON.stringify(payload, null, 2);
+  return `
+  <div class="success-screen">
+    <div class="success-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2dce89" stroke-width="2">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+    </div>
+    <h2>¡Encuesta registrada!</h2>
+    <p>Gracias por participar en el proyecto de Movilidad Escolar Sostenible.<br>
+    Tus respuestas contribuyen al sistema ICMES del Colegio Campestre Horizontes.</p>
+    <div class="data-box" id="json-out">${escHtml(json)}</div>
+    <button class="btn-copy" onclick="copyJson()">Copiar datos</button>
+    <button class="btn-new" onclick="resetAll()">Nueva respuesta</button>
+    ${gpsLat ? `<br><br><a href="https://www.google.com/maps?q=${gpsLat},${gpsLng}" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none;border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:7px 14px;display:inline-flex;align-items:center;gap:6px;margin-top:.5rem">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      Ver ubicación en Google Maps</a>` : ''}
+  </div>`;
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────────
+function radioOpts(name, opts) {
+  return opts.map(o => {
+    const sel = ans[name] === o;
+    return `<label class="opt${sel?' selected':''}" onclick="selectRadio('${name}','${o.replace(/'/g,"\\'").replace(/"/g,'&quot;')}',this)">
+      <input type="radio" name="${name}" value="${o}" ${sel?'checked':''}><span class="opt-label">${o}</span></label>`;
+  }).join('');
+}
+
+function selectRadio(name, value, el) {
+  ans[name] = value;
+  document.querySelectorAll(`[name="${name}"]`).forEach(inp => {
+    inp.closest('.opt').classList.remove('selected');
+    inp.checked = false;
+  });
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+}
+
+function collectFields() {
+  ['nombre','email','municipio','barrio','tiempo_min','km_aprox','obs_bahia','comentarios'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) ans[id] = el.value.trim();
+  });
+  ['grado','dias','estudiantes_vehiculo','espera_ingreso','espera_salida'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value && !el.value.startsWith('—')) ans[id] = el.value;
+  });
+}
+
+function buildPayload(ts) {
+  return {
+    timestamp: ts || new Date().toLocaleString('es-CO'),
+    nombre: ans.nombre,
+    email: ans.email,
+    grado: ans.grado,
+    jornada: ans.jornada,
+    dias_semana: ans.dias,
+    municipio: ans.municipio,
+    barrio: ans.barrio,
+    tiempo_viaje_min: ans.tiempo_min,
+    distancia_km: ans.km_aprox,
+    gps_lat: gpsLat,
+    gps_lng: gpsLng,
+    gps_precision_m: gpsAcc,
+    modalidad_transporte: ans.modalidad,
+    tipo_combustible: ans.combustible,
+    estudiantes_por_vehiculo: ans.estudiantes_vehiculo,
+    comparte_otros_colegios: ans.comparte_otros,
+    ingresa_bahia: ans.usa_bahia,
+    espera_ingreso_manana: ans.espera_ingreso,
+    espera_salida_tarde: ans.espera_salida,
+    congestion_percibida: ans.congestion,
+    obs_bahia: ans.obs_bahia,
+    interes_ruta_compartida: ans.interes_ruta,
+    usaria_punto_encuentro: ans.punto_encuentro,
+    importancia_huella_carbono: ans.importancia_huella,
+    comentarios: ans.comentarios
+  };
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function copyJson() {
+  const text = document.getElementById('json-out').textContent;
+  if (navigator.clipboard) navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text));
+  else fallbackCopy(text);
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  document.execCommand('copy'); document.body.removeChild(ta);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (msg) t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function resetAll() {
+  ans = {}; gpsLat = null; gpsLng = null; gpsAcc = null; step = 0;
+  render();
+}
+
+// ── GPS ────────────────────────────────────────────────────────────────────────
+function getLocation() {
+  const dot    = document.getElementById('loc-dot');
+  const status = document.getElementById('loc-status');
+  const card   = document.getElementById('loc-card');
+  const btn    = document.getElementById('btn-loc');
+  if (!dot) return;
+
+  dot.className    = 'pulse-dot loading';
+  status.className = 'loc-status';
+  status.textContent = 'Obteniendo tu ubicación…';
+  card.className   = 'loc-card';
+  if (btn) btn.disabled = true;
+
+  if (!navigator.geolocation) { setLocError('Tu navegador no soporta geolocalización.'); return; }
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    gpsLat = pos.coords.latitude.toFixed(6);
+    gpsLng = pos.coords.longitude.toFixed(6);
+    gpsAcc = Math.round(pos.coords.accuracy);
+
+    dot.className    = 'pulse-dot ok';
+    status.className = 'loc-status ok';
+    status.textContent = 'Ubicación capturada ✓';
+    card.className   = 'loc-card ok';
+    if (btn) { btn.textContent = '↻ Volver a capturar'; btn.disabled = false; }
+
+    document.getElementById('chip-lat').textContent = `Lat: ${gpsLat}`;
+    document.getElementById('chip-lng').textContent = `Lng: ${gpsLng}`;
+    document.getElementById('chip-acc').textContent = `Precisión: ±${gpsAcc}m`;
+    document.getElementById('coords-row').classList.add('visible');
+  }, err => {
+    const msgs = { 1:'Permiso denegado. Permite el acceso en tu navegador.', 2:'No se pudo determinar la ubicación.', 3:'Tiempo agotado. Intenta de nuevo.' };
+    setLocError(msgs[err.code] || 'Error desconocido.');
+    if (btn) btn.disabled = false;
+  }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
+}
+
+function setLocError(msg) {
+  const dot    = document.getElementById('loc-dot');
+  const status = document.getElementById('loc-status');
+  const card   = document.getElementById('loc-card');
+  if (!dot) return;
+  dot.className    = 'pulse-dot error';
+  status.className = 'loc-status error';
+  status.textContent = msg;
+  card.className   = 'loc-card error';
+}
+
+// ── VALIDACIÓN ─────────────────────────────────────────────────────────────────
+function validate() {
+  const required = {
+    0: [ ['nombre','texto'],['email','email'],['grado','select'],['dias','select'],['jornada','radio'] ],
+    1: [ ['municipio','texto'],['barrio','texto'],['tiempo_min','numero'] ],
+    2: [ ['modalidad','radio'],['estudiantes_vehiculo','select'] ],
+    3: [ ['usa_bahia','radio'],['congestion','radio'] ],
+    4: [ ['interes_ruta','radio'],['importancia_huella','radio'] ],
+  };
+  collectFields();
+  const rules = required[step] || [];
+  let ok = true;
+  rules.forEach(([field, type]) => {
+    const val = ans[field];
+    if (!val || val.trim?.() === '' || val.startsWith?.('—')) {
+      ok = false;
+      const input = document.getElementById(field);
+      if (input) {
+        input.style.borderColor = 'var(--error)';
+        setTimeout(()=>{ if(input) input.style.borderColor=''; }, 2500);
+      }
+    }
+  });
+  return ok;
+}
+
+// ── NAVEGACIÓN ─────────────────────────────────────────────────────────────────
+function goNext() {
+  if (step < STEPS.length - 1) {
+    if (!validate()) { showToast('Por favor completa los campos obligatorios (*)'); return; }
+    step++;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function goBack() {
+  if (step > 0) { collectFields(); step--; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+}
+
+// ── RENDER PRINCIPAL ───────────────────────────────────────────────────────────
+function render() {
+  renderSteps();
+  updateProgress();
+
+  const area = document.getElementById('form-area');
+  const nav  = document.getElementById('nav-area');
+  const back = document.getElementById('btn-back');
+  const next = document.getElementById('btn-next');
+  const lbl  = document.getElementById('btn-label');
+
+  if (step === STEPS.length - 1) {
+    // Envío
+    area.innerHTML = '';
+    nav.style.display = 'none';
+    sendForm();
+    return;
+  }
+
+  const renderers = [renderSec1, renderSec2, renderSec3, renderSec4, renderSec5];
+  area.innerHTML = renderers[step]();
+
+  nav.style.display = 'flex';
+  back.style.display = step === 0 ? 'none' : 'block';
+  lbl.textContent = step === STEPS.length - 2 ? 'Enviar encuesta' : 'Continuar';
+}
+
+// ── ENVÍO ──────────────────────────────────────────────────────────────────────
+async function sendForm() {
+  const area    = document.getElementById('form-area');
+  const spinner = document.getElementById('spinner');
+
+  area.innerHTML = `<div style="text-align:center;padding:2rem 1rem;color:var(--muted)">
+    <div style="width:40px;height:40px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 1rem"></div>
+    Registrando tus respuestas…
+  </div>`;
+
+  const ts = new Date().toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' });
+  const payload = buildPayload(ts);
+
+  try {
+    if (SCRIPT_URL && !SCRIPT_URL.includes('TU_URL')) {
       await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',           // Necesario para Apps Script
+        method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-
-      // Mostrar pantalla de éxito
-      document.getElementById('form-content').style.display = 'none';
-      const successScreen = document.getElementById('success-screen');
-      successScreen.style.display = 'block';
-      document.getElementById('success-msg').textContent =
-        `Hola ${nombre}, tu ubicación (${lat}, ${lng}) quedó registrada.`;
-      document.getElementById('maps-link').href =
-        `https://www.google.com/maps?q=${lat},${lng}`;
-
-    } catch (err) {
-      showToast();
-      btn.disabled  = false;
-      spinner.style.display = 'none';
-      btnText.textContent   = 'Enviar respuesta';
     }
+    area.innerHTML = renderSuccess();
+    document.getElementById('nav-area').style.display = 'none';
+  } catch(err) {
+    area.innerHTML = renderSuccess();
+    document.getElementById('nav-area').style.display = 'none';
   }
+}
 
-  function showToast() {
-    const t = document.getElementById('toast');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3500);
-  }
+// ── INICIO ─────────────────────────────────────────────────────────────────────
+render();
 </script>
-
 </body>
 </html>
