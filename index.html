@@ -8,14 +8,12 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg:       #0f0f13;
       --surface:  #18181f;
       --border:   #2a2a35;
       --accent:   #1D9E75;
       --accent2:  #97BC62;
-      --accent-d: #085041;
       --text:     #e8e8f0;
       --muted:    #7a7a90;
       --success:  #2dce89;
@@ -24,306 +22,130 @@
       --radius:   14px;
       --mono:     'DM Mono', monospace;
     }
-
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 2rem 1rem;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 2rem 1rem 4rem;
     }
-
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
+      content: ''; position: fixed; inset: 0;
       background-image:
         linear-gradient(rgba(29,158,117,.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(29,158,117,.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
+      background-size: 40px 40px; pointer-events: none; z-index: 0;
     }
+    .container { position: relative; z-index: 1; width: 100%; max-width: 520px; }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 700px;
-    }
-
-    /* Header */
     .header { margin-bottom: 2rem; text-align: center; }
-    .badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid rgba(29,158,117,.35);
-      border-radius: 20px;
-      padding: 4px 14px;
-      margin-bottom: 12px;
-    }
+    .badge { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(29,158,117,.35); border-radius: 20px; padding: 4px 14px; margin-bottom: 12px; }
     .header h1 { font-size: 24px; font-weight: 300; color: var(--text); line-height: 1.3; }
     .header h1 span { font-weight: 500; }
     .header p { margin-top: 8px; font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-    /* Card */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2rem;
-      margin-bottom: 1rem;
-    }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 1rem; }
 
-    /* Steps */
-    .steps { display: flex; align-items: center; margin-bottom: 2rem; }
-    .step { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+    .steps { display: flex; align-items: center; margin-bottom: 1.5rem; }
+    .step { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
     .step.active { color: var(--text); }
     .step.done   { color: var(--success); }
-    .step-num {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 500; flex-shrink: 0;
-      transition: all .3s;
-    }
+    .step-num { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; transition: all .3s; }
     .step.active .step-num { border-color: var(--accent); color: var(--accent); }
     .step.done   .step-num { border-color: var(--success); background: var(--success); color: #fff; }
     .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 4px; transition: background .3s; }
     .step-line.done { background: var(--success); }
-    .step-label { display: none; }
-    @media(min-width:420px){ .step-label { display: inline; } }
+    .step-lbl { display: none; }
+    @media(min-width:420px){ .step-lbl { display: inline; } }
 
-    /* Section title inside card */
-    .sec-tag {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid rgba(29,158,117,.25);
-      border-radius: 20px;
-      padding: 3px 10px;
-      margin-bottom: 10px;
-    }
+    .progress-wrap { background: var(--border); border-radius: 4px; height: 3px; margin-bottom: 1.75rem; }
+    .progress-fill { background: var(--accent); height: 3px; border-radius: 4px; transition: width .4s; }
+
+    .sec-tag { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(29,158,117,.25); border-radius: 20px; padding: 3px 10px; margin-bottom: 10px; }
     .sec-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 1.5rem; }
 
-    /* Fields */
     .field { margin-bottom: 1.25rem; }
-    .field label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: .04em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
+    .field label { display: block; font-size: 12px; font-weight: 500; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
     .field label .req { color: var(--error); margin-left: 2px; }
-    .field input, .field select, .field textarea {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 11px 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      color: var(--text);
-      outline: none;
-      transition: border-color .2s;
-      appearance: none;
-    }
-    .field select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a90' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
-      cursor: pointer;
-    }
+    .field input, .field select, .field textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: border-color .2s; appearance: none; }
+    .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a90' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
     .field select option { background: #18181f; }
     .field textarea { resize: vertical; min-height: 80px; }
     .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
     .field input::placeholder, .field textarea::placeholder { color: var(--muted); }
-    .field .helper { font-size: 11px; color: var(--muted); margin-top: 5px; }
-
-    /* Row grid */
+    .field .helper { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 
-    /* Radio / checkbox options */
-    .opts { display: flex; flex-direction: column; gap: .45rem; }
-    .opt {
-      display: flex;
-      align-items: center;
-      gap: .65rem;
-      padding: 10px 13px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: border-color .2s, background .2s;
-      user-select: none;
-    }
+    .opts { display: flex; flex-direction: column; gap: .4rem; }
+    .opt { display: flex; align-items: center; gap: .65rem; padding: 10px 13px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: border-color .2s, background .2s; user-select: none; }
     .opt:hover { border-color: rgba(29,158,117,.5); background: rgba(29,158,117,.04); }
     .opt.selected { border-color: var(--accent); background: rgba(29,158,117,.08); }
-    .opt input[type=radio], .opt input[type=checkbox] {
-      width: 16px; height: 16px;
-      accent-color: var(--accent);
-      flex-shrink: 0;
-      background: transparent;
-      border: none;
-      padding: 0;
-    }
+    .opt input[type=radio] { width: 16px; height: 16px; accent-color: var(--accent); flex-shrink: 0; background: transparent; border: none; padding: 0; }
     .opt-label { font-size: 13px; color: var(--text); line-height: 1.4; }
 
-    /* Location box */
-    .loc-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      transition: border-color .3s;
-    }
+    .toggle-group { display: flex; gap: .5rem; }
+    .toggle-btn { flex: 1; padding: 11px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .2s; text-align: center; }
+    .toggle-btn:hover { border-color: rgba(29,158,117,.5); color: var(--text); }
+    .toggle-btn.yes { border-color: var(--accent); background: rgba(29,158,117,.1); color: var(--accent); }
+    .toggle-btn.no  { border-color: var(--warn); background: rgba(244,162,52,.08); color: var(--warn); }
+
+    .info-box { background: rgba(29,158,117,.06); border: 1px solid rgba(29,158,117,.2); border-radius: 10px; padding: 13px 14px; font-size: 12px; color: #9FE1CB; line-height: 1.7; margin-bottom: 1rem; }
+    .info-box a { color: var(--accent); }
+    .info-box strong { font-weight: 500; color: var(--accent2); }
+
+    .loc-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; transition: border-color .3s; }
     .loc-card.ok    { border-color: rgba(45,206,137,.4); }
     .loc-card.error { border-color: rgba(240,82,82,.4); }
     .loc-header { display: flex; align-items: center; gap: 10px; }
-    .pulse-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--border); flex-shrink: 0;
-      transition: background .3s; position: relative;
-    }
+    .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background .3s; position: relative; }
     .pulse-dot.loading { background: var(--warn); animation: blink .8s ease-in-out infinite alternate; }
     .pulse-dot.ok { background: var(--success); }
-    .pulse-dot.ok::after {
-      content: ''; position: absolute; inset: -4px;
-      border-radius: 50%; border: 1.5px solid var(--success);
-      animation: ripple 1.2s ease-out infinite;
-    }
+    .pulse-dot.ok::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid var(--success); animation: ripple 1.2s ease-out infinite; }
     .pulse-dot.error { background: var(--error); }
     @keyframes blink  { to { opacity: .3; } }
     @keyframes ripple { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(2.4); opacity: 0; } }
-
     .loc-status { font-size: 13px; color: var(--muted); }
     .loc-status.ok { color: var(--success); }
     .loc-status.error { color: var(--error); }
     .coords-row { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); gap: 8px; flex-wrap: wrap; }
     .coords-row.visible { display: flex; }
-    .coord-chip {
-      font-family: var(--mono); font-size: 11px;
-      background: rgba(29,158,117,.1); border: 1px solid rgba(29,158,117,.2);
-      color: var(--accent); border-radius: 6px; padding: 4px 9px;
-    }
-    .coord-chip.acc {
-      background: rgba(244,162,52,.08); border-color: rgba(244,162,52,.2); color: var(--warn);
-    }
-    .btn-loc {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; margin-top: 10px; padding: 10px;
-      background: transparent; border: 1.5px dashed var(--border);
-      border-radius: 10px; color: var(--muted);
-      font-family: 'DM Sans', sans-serif; font-size: 13px;
-      cursor: pointer; transition: border-color .2s, color .2s;
-    }
+    .coord-chip { font-family: var(--mono); font-size: 11px; background: rgba(29,158,117,.1); border: 1px solid rgba(29,158,117,.2); color: var(--accent); border-radius: 6px; padding: 4px 9px; }
+    .coord-chip.acc { background: rgba(244,162,52,.08); border-color: rgba(244,162,52,.2); color: var(--warn); }
+    .btn-loc { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 10px; padding: 10px; background: transparent; border: 1.5px dashed var(--border); border-radius: 10px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: border-color .2s, color .2s; }
     .btn-loc:hover { border-color: var(--accent); color: var(--accent); }
     .btn-loc:disabled { opacity: .4; cursor: not-allowed; }
-    .privacy {
-      display: flex; align-items: flex-start; gap: 7px;
-      margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.5;
-    }
+    .privacy { display: flex; align-items: flex-start; gap: 7px; margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.5; }
 
-    /* Divider */
-    .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    .auto-chip { display: inline-flex; align-items: center; gap: 8px; background: rgba(244,162,52,.08); border: 1px solid rgba(244,162,52,.25); color: var(--warn); border-radius: 10px; padding: 11px 14px; font-size: 13px; width: 100%; }
 
-    /* Nav buttons */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
     .nav { display: flex; gap: .75rem; margin-top: 1.5rem; }
-    .btn-back {
-      padding: 12px 20px;
-      background: transparent; border: 1px solid var(--border);
-      border-radius: 10px; color: var(--muted);
-      font-family: 'DM Sans', sans-serif; font-size: 14px;
-      cursor: pointer; transition: border-color .2s, color .2s;
-      flex-shrink: 0;
-    }
+    .btn-back { padding: 12px 20px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: all .2s; flex-shrink: 0; }
     .btn-back:hover { border-color: var(--muted); color: var(--text); }
-    .btn-next {
-      flex: 1; padding: 12px;
-      background: var(--accent); color: #fff;
-      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-      border: none; border-radius: 10px;
-      cursor: pointer; transition: opacity .2s;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn-next:hover:not(:disabled) { opacity: .88; }
-    .btn-next:disabled { opacity: .35; cursor: not-allowed; }
+    .btn-next { flex: 1; padding: 12px; background: var(--accent); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: opacity .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-next:hover { opacity: .88; }
 
-    /* Spinner */
-    .spinner {
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
-      border-radius: 50%; animation: spin .6s linear infinite; display: none;
-    }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .spin-sm { width: 36px; height: 36px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; margin: 0 auto 1rem; }
 
-    /* Success */
     .success-screen { text-align: center; padding: 1rem 0; }
-    .success-icon {
-      width: 64px; height: 64px;
-      background: rgba(45,206,137,.1); border: 1.5px solid rgba(45,206,137,.3);
-      border-radius: 50%; margin: 0 auto 1.25rem;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .success-icon { width: 64px; height: 64px; background: rgba(45,206,137,.1); border: 1.5px solid rgba(45,206,137,.3); border-radius: 50%; margin: 0 auto 1.25rem; display: flex; align-items: center; justify-content: center; }
     .success-screen h2 { font-size: 20px; font-weight: 400; margin-bottom: 8px; }
-    .success-screen p  { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
-    .data-box {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 10px; padding: 1rem;
-      font-family: var(--mono); font-size: 11px; color: var(--muted);
-      white-space: pre-wrap; text-align: left;
-      max-height: 240px; overflow-y: auto; margin-bottom: 1rem;
-    }
-    .btn-copy {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 9px 16px; background: transparent;
-      border: 1px solid rgba(29,158,117,.35); border-radius: 9px;
-      color: var(--accent); font-family: 'DM Sans', sans-serif; font-size: 13px;
-      cursor: pointer; transition: background .2s;
-    }
+    .success-screen p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+    .data-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: pre-wrap; text-align: left; max-height: 240px; overflow-y: auto; margin-bottom: 1rem; }
+    .btn-copy { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; background: transparent; border: 1px solid rgba(29,158,117,.35); border-radius: 9px; color: var(--accent); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: background .2s; }
     .btn-copy:hover { background: rgba(29,158,117,.08); }
-    .btn-new {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-left: .75rem; padding: 9px 16px;
-      background: var(--accent); border: none; border-radius: 9px;
-      color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px;
-      cursor: pointer; transition: opacity .2s;
-    }
+    .btn-new { display: inline-flex; align-items: center; gap: 6px; margin-left: .75rem; padding: 9px 16px; background: var(--accent); border: none; border-radius: 9px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: opacity .2s; }
     .btn-new:hover { opacity: .88; }
+    .maps-link { font-size: 12px; color: var(--accent); text-decoration: none; border: 1px solid rgba(29,158,117,.3); border-radius: 8px; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px; margin-top: .75rem; transition: background .2s; }
+    .maps-link:hover { background: rgba(29,158,117,.08); }
 
-    /* Toast */
-    #toast {
-      position: fixed; bottom: 24px; left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #1e1e2a; border: 1px solid var(--error);
-      color: var(--error); font-size: 13px;
-      padding: 10px 18px; border-radius: 10px;
-      transition: transform .3s; z-index: 100; white-space: nowrap;
-    }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1e1e2a; border: 1px solid var(--error); color: var(--error); font-size: 13px; padding: 10px 18px; border-radius: 10px; transition: transform .3s; z-index: 100; white-space: nowrap; max-width: 90vw; text-align: center; }
     #toast.show { transform: translateX(-50%) translateY(0); }
-
-    /* Progress */
-    .progress-wrap { background: var(--border); border-radius: 4px; height: 3px; margin-bottom: 1.5rem; }
-    .progress-fill { background: var(--accent); height: 3px; border-radius: 4px; transition: width .4s; }
   </style>
 </head>
 <body>
-
 <div class="container">
   <div class="header">
     <div class="badge">Movilidad Escolar · ICMES</div>
@@ -331,508 +153,493 @@
     <p>Colegio Campestre Horizontes &mdash; Línea 2 Sostenibilidad<br>
     Tus respuestas alimentan el Sistema Inteligente de Movilidad Escolar.</p>
   </div>
-
   <div class="card">
-    <!-- Steps -->
     <div class="steps" id="steps-bar"></div>
-
-    <!-- Progress -->
     <div class="progress-wrap"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
-
-    <!-- Dynamic content -->
     <div id="form-area"></div>
-
-    <!-- Nav -->
     <div class="nav" id="nav-area">
       <button class="btn-back" id="btn-back" style="display:none" onclick="goBack()">← Atrás</button>
-      <button class="btn-next" id="btn-next" onclick="goNext()">
-        <span id="btn-label">Continuar</span>
-        <div class="spinner" id="spinner"></div>
-      </button>
+      <button class="btn-next" id="btn-next" onclick="goNext()"><span id="btn-label">Continuar</span></button>
     </div>
   </div>
 </div>
-
-<div id="toast">Error al procesar. Intenta de nuevo.</div>
+<div id="toast"></div>
 
 <script>
-// ── CONFIGURACIÓN ──────────────────────────────────────────────────────────────
-// Reemplaza con tu Google Apps Script URL para guardar en Google Sheets
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzj_Zgc7UO8iFPyb3tbqkLUKSvakpxO2zpMsj0uQ1BLrR_b2BJH6JiuWeXASYK-c-EmrA/exec";
-
-// ── ESTADO ─────────────────────────────────────────────────────────────────────
 let step = 0;
 let ans  = {};
 let gpsLat = null, gpsLng = null, gpsAcc = null;
 
-// ── SECCIONES ──────────────────────────────────────────────────────────────────
 const STEPS = [
-  { label: 'Estudiante' },
-  { label: 'Ubicación' },
-  { label: 'Transporte' },
-  { label: 'Bahía' },
-  { label: 'Sostenibilidad' },
-  { label: 'Enviar' },
+  {label:'Estudiante'},{label:'Ubicación'},{label:'Transporte'},
+  {label:'Bahía'},{label:'Sostenibilidad'},{label:'Enviar'}
 ];
 
-// ── RENDER STEPS BAR ───────────────────────────────────────────────────────────
 function renderSteps() {
-  const bar = document.getElementById('steps-bar');
-  let html = '';
-  STEPS.forEach((s, i) => {
-    const cls = i < step ? 'done' : i === step ? 'active' : '';
-    html += `<div class="step ${cls}">
-      <div class="step-num">${i < step ? '✓' : i+1}</div>
-      <span class="step-label">${s.label}</span>
-    </div>`;
-    if (i < STEPS.length - 1) {
-      html += `<div class="step-line${i < step ? ' done' : ''}"></div>`;
-    }
+  let h = '';
+  STEPS.forEach((s,i) => {
+    const c = i<step?'done':i===step?'active':'';
+    h += `<div class="step ${c}"><div class="step-num">${i<step?'✓':i+1}</div><span class="step-lbl">${s.label}</span></div>`;
+    if(i<STEPS.length-1) h+=`<div class="step-line${i<step?' done':''}"></div>`;
   });
-  bar.innerHTML = html;
+  document.getElementById('steps-bar').innerHTML = h;
+  document.getElementById('pbar').style.width = Math.round((step/(STEPS.length-1))*100)+'%';
 }
 
-function updateProgress() {
-  document.getElementById('pbar').style.width = Math.round((step / (STEPS.length - 1)) * 100) + '%';
-}
-
-// ── SECCIÓN 1: DATOS ESTUDIANTE ────────────────────────────────────────────────
+// ── SEC 1 ──────────────────────────────────────────────────────────────────────
 function renderSec1() {
+  const grados = ['— Grado —','Preescolar','1°','2°','3°','4°','5°','6°','7°','8°','9°','10°','11°'];
+  const fM = ['7:00 am – 7:25 am','7:25 am – 7:45 am','7:45 am – 8:05 am'];
+  const fT = ['2:40 pm – 3:00 pm','3:00 pm – 3:20 pm','3:20 pm – 3:45 pm'];
   return `
   <div class="sec-tag">01 · Datos del estudiante</div>
-  <div class="sec-title">Cuéntanos sobre el estudiante</div>
-
+  <div class="sec-title">Información del estudiante</div>
   <div class="field">
-    <label>Nombre completo del estudiante <span class="req">*</span></label>
-    <input type="text" id="nombre" placeholder="Ej. María López" value="${ans.nombre||''}">
-  </div>
-  <div class="row2">
-    <div class="field">
-      <label>Grado del estudiante <span class="req">*</span></label>
-      <select id="grado">
-        ${['— Grado —','Preescolar','1°','2°','3°','4°','5°','6°','7°','8°','9°','10°','11°']
-          .map(o=>`<option value="${o}" ${ans.grado===o?'selected':''}>${o}</option>`).join('')}
-      </select>
-    </div>
+    <label>Nombre del estudiante <span class="req">*</span></label>
+    <input type="text" id="nombre" placeholder="Ej. Juan Pérez" value="${esc(ans.nombre||'')}">
   </div>
   <div class="field">
-    <label>Jornada de ingreso habitual <span class="req">*</span></label>
-    <div class="opts">${radioOpts('jornada',['Primaria (7:00 AM - 7:25 AM)','Secundaria (7:25 AM - 7:45 AM)'])}</div>
+    <label>Grado <span class="req">*</span></label>
+    <select id="grado">${grados.map(o=>`<option value="${o}"${ans.grado===o?' selected':''}>${o}</option>`).join('')}</select>
+  </div>
+  <div class="field">
+    <label>Franja de ingreso en la mañana <span class="req">*</span></label>
+    <div class="opts">${rOpts('franja_manana',fM)}</div>
+  </div>
+  <div class="field">
+    <label>Franja de ingreso en la tarde <span class="req">*</span></label>
+    <div class="opts">${rOpts('franja_tarde',fT)}</div>
   </div>`;
 }
 
-// ── SECCIÓN 2: UBICACIÓN + GPS ─────────────────────────────────────────────────
+// ── SEC 2 ──────────────────────────────────────────────────────────────────────
 function renderSec2() {
-  const hasGps = gpsLat !== null;
+  const tn = ans.tiene_nomenclatura;
+  let inner = '';
+
+  if(tn === true) {
+    inner = `
+    <div class="field">
+      <label>Dirección completa <span class="req">*</span></label>
+      <input type="text" id="direccion" placeholder="Ej. Calle 100 # 15-20" value="${esc(ans.direccion||'')}">
+      <div class="helper">Incluye tipo de vía, número principal y secundario. Ej: Carrera 45 # 10-30</div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Barrio / sector <span class="req">*</span></label>
+        <input type="text" id="barrio" placeholder="Ej. El Porvenir" value="${esc(ans.barrio||'')}">
+      </div>
+      <div class="field">
+        <label>Municipio <span class="req">*</span></label>
+        <input type="text" id="municipio" placeholder="Ej. La Ceja" value="${esc(ans.municipio||'')}">
+      </div>
+    </div>`;
+  } else if(tn === false) {
+    inner = `
+    <div class="info-box">
+      <strong>¿Cómo obtener tu ubicación?</strong><br>
+      <strong>Opción A (recomendada):</strong> Haz clic en el botón GPS y acepta el permiso en tu navegador. Se capturará tu ubicación automáticamente.<br>
+      <strong>Opción B:</strong> Abre <a href="https://maps.google.com" target="_blank">Google Maps ↗</a>, mantén presionado el punto de tu casa y copia las coordenadas que aparecen (ej. <em>6.0328, -75.4324</em>). Pégalas abajo.
+    </div>
+    <div class="field">
+      <label>Opción A — Compartir ubicación con GPS</label>
+      <div class="loc-card${gpsLat?' ok':''}" id="loc-card">
+        <div class="loc-header">
+          <div class="pulse-dot${gpsLat?' ok':''}" id="loc-dot"></div>
+          <span class="loc-status${gpsLat?' ok':''}" id="loc-status">${gpsLat?'Ubicación capturada ✓':'Sin ubicación aún'}</span>
+        </div>
+        <div class="coords-row${gpsLat?' visible':''}" id="coords-row">
+          <span class="coord-chip" id="chip-lat">Lat: ${gpsLat||'—'}</span>
+          <span class="coord-chip" id="chip-lng">Lng: ${gpsLng||'—'}</span>
+          <span class="coord-chip acc" id="chip-acc">Precisión: ${gpsAcc?'±'+gpsAcc+'m':'—'}</span>
+        </div>
+      </div>
+      <button class="btn-loc" onclick="getLocation()" id="btn-loc">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        ${gpsLat?'↻ Volver a capturar':'Capturar mi ubicación GPS'}
+      </button>
+      <div class="privacy">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;opacity:.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Solo para uso estadístico del proyecto ICMES. No se comparte con terceros.
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="field">
+      <label>Opción B — Ingresar coordenadas manualmente</label>
+      <div class="helper" style="margin-bottom:.6rem">En Google Maps: mantén presionado tu punto de origen → copia los números que aparecen.
+        <a href="https://maps.google.com" target="_blank" style="color:var(--accent);margin-left:4px">Abrir Google Maps →</a>
+      </div>
+      <div class="row2">
+        <div class="field" style="margin-bottom:0">
+          <label style="margin-bottom:4px">Latitud</label>
+          <input type="number" id="lat_manual" placeholder="Ej. 6.0328" step="any" value="${esc(ans.lat_manual||'')}" oninput="saveManual()">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label style="margin-bottom:4px">Longitud</label>
+          <input type="number" id="lng_manual" placeholder="Ej. -75.4324" step="any" value="${esc(ans.lng_manual||'')}" oninput="saveManual()">
+        </div>
+      </div>
+    </div>`;
+  } else {
+    inner = `<p style="font-size:13px;color:var(--muted);text-align:center;margin-top:.25rem">Selecciona una opción arriba para continuar.</p>`;
+  }
+
   return `
   <div class="sec-tag">02 · Ubicación y distancia</div>
   <div class="sec-title">¿Desde dónde viaja el estudiante?</div>
-
-  <div class="row2">
-    <div class="field">
-      <label>Municipio <span class="req">*</span></label>
-      <input type="text" id="municipio" placeholder="Ej. La Ceja" value="${ans.municipio||''}">
-    </div>
-    <div class="field">
-      <label>Barrio / sector <span class="req">*</span></label>
-      <input type="text" id="barrio" placeholder="Ej. El Porvenir" value="${ans.barrio||''}">
-    </div>
-  </div>
-  <div class="row2">
-    <div class="field">
-      <label>Tiempo de viaje (minutos) <span class="req">*</span></label>
-      <input type="number" id="tiempo_min" placeholder="Ej. 20" min="1" max="180" step="1" value="${ans.tiempo_min||''}">
-    </div>
-    <div class="field">
-      <label>Distancia aprox. (km)</label>
-      <input type="number" id="km_aprox" placeholder="Ej. 4.5" min="0" step="0.1" value="${ans.km_aprox||''}">
-      <div class="helper">Puedes estimarla en Google Maps</div>
-    </div>
-  </div>
-
   <div class="field">
-    <label>Ubicación GPS (punto de origen)</label>
-    <div class="loc-card${hasGps?' ok':''}" id="loc-card">
-      <div class="loc-header">
-        <div class="pulse-dot${hasGps?' ok':''}" id="loc-dot"></div>
-        <span class="loc-status${hasGps?' ok':''}" id="loc-status">
-          ${hasGps ? 'Ubicación capturada ✓' : 'Aún no hemos capturado tu ubicación'}
-        </span>
-      </div>
-      <div class="coords-row${hasGps?' visible':''}" id="coords-row">
-        <span class="coord-chip" id="chip-lat">Lat: ${hasGps?gpsLat:'—'}</span>
-        <span class="coord-chip" id="chip-lng">Lng: ${hasGps?gpsLng:'—'}</span>
-        <span class="coord-chip acc" id="chip-acc">Precisión: ${hasGps?'±'+gpsAcc+'m':'—'}</span>
-      </div>
+    <label>¿La dirección de residencia tiene nomenclatura? <span class="req">*</span></label>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:.75rem;line-height:1.6">Por ejemplo: <em>Calle 100 # 15-20</em>. Las veredas o zonas rurales usualmente no tienen nomenclatura.</p>
+    <div class="toggle-group">
+      <button type="button" class="toggle-btn${tn===true?' yes':''}" onclick="setNomenclatura(true)">Sí, tengo dirección</button>
+      <button type="button" class="toggle-btn${tn===false?' no':''}" onclick="setNomenclatura(false)">No — zona rural / sin nomenclatura</button>
     </div>
-    <button class="btn-loc" onclick="getLocation()" id="btn-loc">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-        <circle cx="12" cy="9" r="2.5"/>
-      </svg>
-      ${hasGps ? '↻ Volver a capturar' : 'Capturar ubicación con GPS'}
-    </button>
-    <div class="privacy">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;opacity:.5">
-        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-      </svg>
-      Las coordenadas se usan solo con fines estadísticos para el proyecto ICMES. No se comparten con terceros.
+  </div>
+  ${inner}
+  ${tn !== undefined ? `
+  <div class="divider"></div>
+  <div class="row2">
+    <div class="field">
+      <label>Tiempo de viaje promedio (minutos) <span class="req">*</span></label>
+      <input type="number" id="tiempo_min" placeholder="Ej. 20" min="1" max="180" step="1" value="${esc(ans.tiempo_min||'')}">
     </div>
-  </div>`;
+    <div class="field">
+      <label>Distancia aprox. (km) — opcional</label>
+      <input type="number" id="km_aprox" placeholder="Ej. 4.5" min="0" step="0.1" value="${esc(ans.km_aprox||'')}">
+      <div class="helper">Puedes estimarla en Google Maps.</div>
+    </div>
+  </div>` : ''}`;
 }
 
-// ── SECCIÓN 3: TRANSPORTE ──────────────────────────────────────────────────────
+function setNomenclatura(val) {
+  collectFields();
+  ans.tiene_nomenclatura = val;
+  document.getElementById('form-area').innerHTML = renderSec2();
+}
+function saveManual() {
+  const la = document.getElementById('lat_manual');
+  const ln = document.getElementById('lng_manual');
+  if(la) ans.lat_manual = la.value;
+  if(ln) ans.lng_manual = ln.value;
+}
+
+// ── SEC 3 ──────────────────────────────────────────────────────────────────────
 function renderSec3() {
+  const mod = ans.modalidad;
+  const modalidades = [
+    'Vehículo particular — Carro',
+    'Vehículo particular — Moto',
+    'Transporte escolar (ruta contratada)',
+    'Transporte público (bus, colectivo)',
+    'A pie / caminando',
+    'Bicicleta o patineta eléctrica',
+  ];
+
+  let combustBlock = '';
+  if(mod === 'Vehículo particular — Carro') {
+    combustBlock = `
+    <div class="field">
+      <label>Tipo de combustible del carro <span class="req">*</span></label>
+      <div class="opts">${rOpts('combustible',['Gasolina','Diésel','Gas natural (GNV)','Híbrido','Eléctrico'])}</div>
+    </div>`;
+  } else if(mod === 'Vehículo particular — Moto') {
+    if(ans.combustible && !['Gasolina','Eléctrica'].includes(ans.combustible)) ans.combustible = undefined;
+    combustBlock = `
+    <div class="field">
+      <label>Tipo de combustible de la moto <span class="req">*</span></label>
+      <div class="opts">${rOpts('combustible',['Gasolina','Eléctrica'])}</div>
+    </div>`;
+  } else if(mod === 'Transporte escolar (ruta contratada)') {
+    ans.combustible = 'Diésel';
+    combustBlock = `
+    <div class="field">
+      <label>Combustible del transporte escolar</label>
+      <div class="auto-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Diésel — asignado automáticamente para transporte escolar
+      </div>
+    </div>`;
+  } else {
+    ans.combustible = undefined;
+  }
+
   return `
   <div class="sec-tag">03 · Modalidad de transporte</div>
   <div class="sec-title">¿Cómo llega el estudiante al colegio?</div>
-
   <div class="field">
     <label>Medio de transporte habitual <span class="req">*</span></label>
-    <div class="opts">${radioOpts('modalidad',['Vehículo particular (carro o moto)','Transporte escolar (ruta contratada)','Transporte público (bus, colectivo)','A pie / caminando','Bicicleta o patineta eléctrica'])}</div>
+    <div class="opts">
+      ${modalidades.map(o=>{
+        const sel = ans.modalidad===o;
+        return `<label class="opt${sel?' selected':''}" onclick="selectModalidad(this,'${o.replace(/'/g,"\\'")}')">
+          <input type="radio" name="modalidad" value="${o}"${sel?' checked':''}><span class="opt-label">${o}</span></label>`;
+      }).join('')}
+    </div>
   </div>
-
+  ${combustBlock}
+  <div class="divider"></div>
   <div class="field">
-    <label>Tipo de combustible del vehículo</label>
-    <div class="opts">${radioOpts('combustible',['Gasolina','Diésel','Gas natural vehicular (GNV)','Eléctrico','Híbrido','No aplica — no usa vehículo'])}</div>
-  </div>
-
-  <div class="field">
-    <label>¿Cuántos estudiantes viajan en el mismo vehículo? <span class="req">*</span></label>
+    <label>¿Cuántos estudiantes de la institución comparten el mismo vehículo? <span class="req">*</span></label>
     <select id="estudiantes_vehiculo">
       ${['— Selecciona —','Solo el estudiante (1)','2 estudiantes','3 estudiantes','4 o más estudiantes','No aplica — no usa vehículo']
-        .map(o=>`<option value="${o}" ${ans.estudiantes_vehiculo===o?'selected':''}>${o}</option>`).join('')}
+        .map(o=>`<option value="${o}"${ans.estudiantes_vehiculo===o?' selected':''}>${o}</option>`).join('')}
     </select>
   </div>
-
   <div class="field">
-    <label>¿Comparte el vehículo con estudiantes de otros colegios?</label>
-    <div class="opts">${radioOpts('comparte_otros',['Sí','No','No aplica'])}</div>
+    <label>¿Comparte el vehículo con otros estudiantes de la misma institución? <span class="req">*</span></label>
+    <div class="opts">${rOpts('comparte_institucion',['Sí, con compañeros del colegio','No','No aplica — no usa vehículo'])}</div>
   </div>`;
 }
 
-// ── SECCIÓN 4: BAHÍA ───────────────────────────────────────────────────────────
+function selectModalidad(el, value) {
+  collectFields();
+  ans.modalidad = value;
+  ans.combustible = undefined;
+  document.getElementById('form-area').innerHTML = renderSec3();
+}
+
+// ── SEC 4 ──────────────────────────────────────────────────────────────────────
 function renderSec4() {
   return `
   <div class="sec-tag">04 · Experiencia en la bahía</div>
   <div class="sec-title">Tiempos de espera y congestión</div>
-
   <div class="field">
     <label>¿El vehículo ingresa a la bahía del colegio? <span class="req">*</span></label>
-    <div class="opts">${radioOpts('usa_bahia',['Sí, siempre','A veces','No, deja al estudiante en otro punto'])}</div>
+    <div class="opts">${rOpts('usa_bahia',['Sí, siempre','A veces','No, deja al estudiante en otro punto'])}</div>
   </div>
-
   <div class="row2">
     <div class="field">
       <label>Espera antes de ingresar (mañana)</label>
-      <select id="espera_ingreso">
-        ${['— Selecciona —','Menos de 5 min','5 a 10 min','10 a 20 min','Más de 20 min','No aplica']
-          .map(o=>`<option value="${o}" ${ans.espera_ingreso===o?'selected':''}>${o}</option>`).join('')}
-      </select>
+      <select id="espera_ingreso">${['— Selecciona —','Menos de 5 min','5 a 10 min','10 a 20 min','Más de 20 min','No aplica'].map(o=>`<option value="${o}"${ans.espera_ingreso===o?' selected':''}>${o}</option>`).join('')}</select>
     </div>
     <div class="field">
-      <label>Espera al recoger (tarde/salida)</label>
-      <select id="espera_salida">
-        ${['— Selecciona —','Menos de 5 min','5 a 10 min','10 a 20 min','Más de 20 min','No aplica']
-          .map(o=>`<option value="${o}" ${ans.espera_salida===o?'selected':''}>${o}</option>`).join('')}
-      </select>
+      <label>Espera al recoger (tarde / salida)</label>
+      <select id="espera_salida">${['— Selecciona —','Menos de 5 min','5 a 10 min','10 a 20 min','Más de 20 min','No aplica'].map(o=>`<option value="${o}"${ans.espera_salida===o?' selected':''}>${o}</option>`).join('')}</select>
     </div>
   </div>
-
   <div class="field">
     <label>¿Percibe congestión vehicular en el acceso al colegio? <span class="req">*</span></label>
-    <div class="opts">${radioOpts('congestion',['Sí, siempre','Frecuentemente','Pocas veces','Nunca'])}</div>
+    <div class="opts">${rOpts('congestion',['Sí, siempre','Frecuentemente','Pocas veces','Nunca'])}</div>
   </div>
-
   <div class="field">
     <label>Observaciones sobre la bahía</label>
-    <textarea id="obs_bahia" placeholder="Comentarios, situaciones recurrentes, sugerencias…">${ans.obs_bahia||''}</textarea>
+    <textarea id="obs_bahia" placeholder="Comentarios, situaciones recurrentes, sugerencias…">${esc(ans.obs_bahia||'')}</textarea>
   </div>`;
 }
 
-// ── SECCIÓN 5: SOSTENIBILIDAD ──────────────────────────────────────────────────
+// ── SEC 5 ──────────────────────────────────────────────────────────────────────
 function renderSec5() {
   return `
   <div class="sec-tag">05 · Sostenibilidad y cambio</div>
   <div class="sec-title">Disposición y percepción ambiental</div>
-
   <div class="field">
     <label>¿Estaría dispuesto/a a usar una ruta escolar compartida optimizada? <span class="req">*</span></label>
-    <div class="opts">${radioOpts('interes_ruta',['Sí, definitivamente','Posiblemente, si la ruta es conveniente','No, prefiero el vehículo particular','Ya usa ruta escolar'])}</div>
+    <div class="opts">${rOpts('interes_ruta',['Sí, definitivamente','Posiblemente, si la ruta es conveniente','No, prefiero el vehículo particular','Ya usa ruta escolar'])}</div>
   </div>
-
   <div class="field">
     <label>¿Usaría un punto de encuentro cercano a su hogar para tomar la ruta?</label>
-    <div class="opts">${radioOpts('punto_encuentro',['Sí','Depende de la distancia al punto','No'])}</div>
+    <div class="opts">${rOpts('punto_encuentro',['Sí','Depende de la distancia al punto','No'])}</div>
   </div>
-
   <div class="field">
-    <label>¿Qué tan importante es para usted reducir la huella de carbono de la movilidad escolar? <span class="req">*</span></label>
-    <div class="opts">${radioOpts('importancia_huella',['Muy importante','Importante','Poco importante','No lo había considerado'])}</div>
+    <label>¿Qué tan importante es reducir la huella de carbono de la movilidad escolar? <span class="req">*</span></label>
+    <div class="opts">${rOpts('importancia_huella',['Muy importante','Importante','Poco importante','No lo había considerado'])}</div>
   </div>
-
   <div class="field">
     <label>Comentarios adicionales</label>
-    <textarea id="comentarios" placeholder="Sugerencias, inquietudes o información relevante para el proyecto…">${ans.comentarios||''}</textarea>
-  </div>`;
-}
-
-// ── PANTALLA DE ÉXITO ──────────────────────────────────────────────────────────
-function renderSuccess() {
-  const ts = new Date().toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' });
-  const payload = buildPayload(ts);
-  const json = JSON.stringify(payload, null, 2);
-  return `
-  <div class="success-screen">
-    <div class="success-icon">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2dce89" stroke-width="2">
-        <path d="M20 6L9 17l-5-5"/>
-      </svg>
-    </div>
-    <h2>¡Encuesta registrada!</h2>
-    <p>Gracias por participar en el proyecto de Movilidad Escolar Sostenible.<br>
-    Tus respuestas contribuyen al sistema ICMES del Colegio Campestre Horizontes.</p>
-    <div class="data-box" id="json-out">${escHtml(json)}</div>
-    <button class="btn-copy" onclick="copyJson()">Copiar datos</button>
-    <button class="btn-new" onclick="resetAll()">Nueva respuesta</button>
-    ${gpsLat ? `<br><br><a href="https://www.google.com/maps?q=${gpsLat},${gpsLng}" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none;border:1px solid rgba(29,158,117,.3);border-radius:8px;padding:7px 14px;display:inline-flex;align-items:center;gap:6px;margin-top:.5rem">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-      Ver ubicación en Google Maps</a>` : ''}
+    <textarea id="comentarios" placeholder="Sugerencias, inquietudes o información relevante…">${esc(ans.comentarios||'')}</textarea>
   </div>`;
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────────
-function radioOpts(name, opts) {
+function esc(s){ return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function rOpts(name, opts) {
   return opts.map(o => {
     const sel = ans[name] === o;
-    return `<label class="opt${sel?' selected':''}" onclick="selectRadio('${name}','${o.replace(/'/g,"\\'").replace(/"/g,'&quot;')}',this)">
-      <input type="radio" name="${name}" value="${o}" ${sel?'checked':''}><span class="opt-label">${o}</span></label>`;
+    const safe = o.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<label class="opt${sel?' selected':''}" onclick="selRadio('${name}','${safe}',this)">
+      <input type="radio" name="${name}" value="${esc(o)}"${sel?' checked':''}><span class="opt-label">${o}</span></label>`;
   }).join('');
 }
 
-function selectRadio(name, value, el) {
+function selRadio(name, value, el) {
   ans[name] = value;
   document.querySelectorAll(`[name="${name}"]`).forEach(inp => {
-    inp.closest('.opt').classList.remove('selected');
-    inp.checked = false;
+    inp.closest('.opt').classList.remove('selected'); inp.checked = false;
   });
-  el.classList.add('selected');
-  el.querySelector('input').checked = true;
+  el.classList.add('selected'); el.querySelector('input').checked = true;
 }
 
 function collectFields() {
-  ['nombre','email','municipio','barrio','tiempo_min','km_aprox','obs_bahia','comentarios'].forEach(id => {
+  ['nombre','direccion','barrio','municipio','tiempo_min','km_aprox','lat_manual','lng_manual','obs_bahia','comentarios'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) ans[id] = el.value.trim();
+    if(el) ans[id] = el.value.trim();
   });
-  ['grado','dias','estudiantes_vehiculo','espera_ingreso','espera_salida'].forEach(id => {
+  ['grado','estudiantes_vehiculo','espera_ingreso','espera_salida'].forEach(id => {
     const el = document.getElementById(id);
-    if (el && el.value && !el.value.startsWith('—')) ans[id] = el.value;
+    if(el && el.value && !el.value.startsWith('—')) ans[id] = el.value;
   });
 }
 
-function buildPayload(ts) {
-  return {
-    timestamp: ts || new Date().toLocaleString('es-CO'),
-    nombre: ans.nombre,
-    email: ans.email,
-    grado: ans.grado,
-    jornada: ans.jornada,
-    dias_semana: ans.dias,
-    municipio: ans.municipio,
-    barrio: ans.barrio,
-    tiempo_viaje_min: ans.tiempo_min,
-    distancia_km: ans.km_aprox,
-    gps_lat: gpsLat,
-    gps_lng: gpsLng,
-    gps_precision_m: gpsAcc,
-    modalidad_transporte: ans.modalidad,
-    tipo_combustible: ans.combustible,
-    estudiantes_por_vehiculo: ans.estudiantes_vehiculo,
-    comparte_otros_colegios: ans.comparte_otros,
-    ingresa_bahia: ans.usa_bahia,
-    espera_ingreso_manana: ans.espera_ingreso,
-    espera_salida_tarde: ans.espera_salida,
-    congestion_percibida: ans.congestion,
-    obs_bahia: ans.obs_bahia,
-    interes_ruta_compartida: ans.interes_ruta,
-    usaria_punto_encuentro: ans.punto_encuentro,
-    importancia_huella_carbono: ans.importancia_huella,
-    comentarios: ans.comentarios
-  };
-}
-
-function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function copyJson() {
-  const text = document.getElementById('json-out').textContent;
-  if (navigator.clipboard) navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text));
-  else fallbackCopy(text);
-}
-function fallbackCopy(text) {
-  const ta = document.createElement('textarea');
-  ta.value = text; document.body.appendChild(ta); ta.select();
-  document.execCommand('copy'); document.body.removeChild(ta);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  if (msg) t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-function resetAll() {
-  ans = {}; gpsLat = null; gpsLng = null; gpsAcc = null; step = 0;
-  render();
-}
-
-// ── GPS ────────────────────────────────────────────────────────────────────────
-function getLocation() {
-  const dot    = document.getElementById('loc-dot');
-  const status = document.getElementById('loc-status');
-  const card   = document.getElementById('loc-card');
-  const btn    = document.getElementById('btn-loc');
-  if (!dot) return;
-
-  dot.className    = 'pulse-dot loading';
-  status.className = 'loc-status';
-  status.textContent = 'Obteniendo tu ubicación…';
-  card.className   = 'loc-card';
-  if (btn) btn.disabled = true;
-
-  if (!navigator.geolocation) { setLocError('Tu navegador no soporta geolocalización.'); return; }
-
-  navigator.geolocation.getCurrentPosition(pos => {
-    gpsLat = pos.coords.latitude.toFixed(6);
-    gpsLng = pos.coords.longitude.toFixed(6);
-    gpsAcc = Math.round(pos.coords.accuracy);
-
-    dot.className    = 'pulse-dot ok';
-    status.className = 'loc-status ok';
-    status.textContent = 'Ubicación capturada ✓';
-    card.className   = 'loc-card ok';
-    if (btn) { btn.textContent = '↻ Volver a capturar'; btn.disabled = false; }
-
-    document.getElementById('chip-lat').textContent = `Lat: ${gpsLat}`;
-    document.getElementById('chip-lng').textContent = `Lng: ${gpsLng}`;
-    document.getElementById('chip-acc').textContent = `Precisión: ±${gpsAcc}m`;
-    document.getElementById('coords-row').classList.add('visible');
-  }, err => {
-    const msgs = { 1:'Permiso denegado. Permite el acceso en tu navegador.', 2:'No se pudo determinar la ubicación.', 3:'Tiempo agotado. Intenta de nuevo.' };
-    setLocError(msgs[err.code] || 'Error desconocido.');
-    if (btn) btn.disabled = false;
-  }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
-}
-
-function setLocError(msg) {
-  const dot    = document.getElementById('loc-dot');
-  const status = document.getElementById('loc-status');
-  const card   = document.getElementById('loc-card');
-  if (!dot) return;
-  dot.className    = 'pulse-dot error';
-  status.className = 'loc-status error';
-  status.textContent = msg;
-  card.className   = 'loc-card error';
+function highlight(id) {
+  const el = document.getElementById(id); if(!el) return;
+  el.style.borderColor='var(--error)'; el.focus?.();
+  setTimeout(()=>{ if(el) el.style.borderColor=''; }, 2500);
 }
 
 // ── VALIDACIÓN ─────────────────────────────────────────────────────────────────
 function validate() {
-  const required = {
-    0: [ ['nombre','texto'],['email','email'],['grado','select'],['dias','select'],['jornada','radio'] ],
-    1: [ ['municipio','texto'],['barrio','texto'],['tiempo_min','numero'] ],
-    2: [ ['modalidad','radio'],['estudiantes_vehiculo','select'] ],
-    3: [ ['usa_bahia','radio'],['congestion','radio'] ],
-    4: [ ['interes_ruta','radio'],['importancia_huella','radio'] ],
-  };
   collectFields();
-  const rules = required[step] || [];
-  let ok = true;
-  rules.forEach(([field, type]) => {
-    const val = ans[field];
-    if (!val || val.trim?.() === '' || val.startsWith?.('—')) {
-      ok = false;
-      const input = document.getElementById(field);
-      if (input) {
-        input.style.borderColor = 'var(--error)';
-        setTimeout(()=>{ if(input) input.style.borderColor=''; }, 2500);
+  if(step===0){
+    let ok=true;
+    if(!ans.nombre){ highlight('nombre'); ok=false; }
+    if(!ans.grado||ans.grado.startsWith('—')){ highlight('grado'); ok=false; }
+    if(!ans.franja_manana) ok=false;
+    if(!ans.franja_tarde) ok=false;
+    return ok;
+  }
+  if(step===1){
+    if(ans.tiene_nomenclatura===undefined){ showToast('Indica si tu dirección tiene nomenclatura.'); return false; }
+    let ok=true;
+    if(!ans.tiempo_min){ highlight('tiempo_min'); ok=false; }
+    if(ans.tiene_nomenclatura===true){
+      if(!ans.direccion){ highlight('direccion'); ok=false; }
+      if(!ans.barrio){ highlight('barrio'); ok=false; }
+      if(!ans.municipio){ highlight('municipio'); ok=false; }
+    } else {
+      if(!gpsLat && (!ans.lat_manual || !ans.lng_manual)){
+        showToast('Comparte tu ubicación GPS o ingresa las coordenadas manualmente.'); ok=false;
       }
     }
-  });
-  return ok;
+    return ok;
+  }
+  if(step===2){
+    let ok=true;
+    if(!ans.modalidad) ok=false;
+    const needsFuel = ['Vehículo particular — Carro','Vehículo particular — Moto'].includes(ans.modalidad);
+    if(needsFuel && !ans.combustible) ok=false;
+    if(!ans.estudiantes_vehiculo||ans.estudiantes_vehiculo.startsWith('—')){ highlight('estudiantes_vehiculo'); ok=false; }
+    if(!ans.comparte_institucion) ok=false;
+    return ok;
+  }
+  if(step===3){
+    return !!(ans.usa_bahia && ans.congestion);
+  }
+  if(step===4){
+    return !!(ans.interes_ruta && ans.importancia_huella);
+  }
+  return true;
 }
+
+// ── GPS ────────────────────────────────────────────────────────────────────────
+function getLocation() {
+  const dot=document.getElementById('loc-dot'), status=document.getElementById('loc-status'),
+        card=document.getElementById('loc-card'), btn=document.getElementById('btn-loc');
+  if(!dot) return;
+  dot.className='pulse-dot loading'; status.className='loc-status'; status.textContent='Obteniendo ubicación…';
+  card.className='loc-card'; if(btn) btn.disabled=true;
+  if(!navigator.geolocation){ setLocErr('Tu navegador no soporta geolocalización.'); return; }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    gpsLat=pos.coords.latitude.toFixed(6); gpsLng=pos.coords.longitude.toFixed(6); gpsAcc=Math.round(pos.coords.accuracy);
+    dot.className='pulse-dot ok'; status.className='loc-status ok'; status.textContent='Ubicación capturada ✓';
+    card.className='loc-card ok'; if(btn){ btn.textContent='↻ Volver a capturar'; btn.disabled=false; }
+    const cr=document.getElementById('coords-row');
+    if(cr){ cr.classList.add('visible');
+      document.getElementById('chip-lat').textContent='Lat: '+gpsLat;
+      document.getElementById('chip-lng').textContent='Lng: '+gpsLng;
+      document.getElementById('chip-acc').textContent='Precisión: ±'+gpsAcc+'m';
+    }
+  },err=>{
+    const m={1:'Permiso denegado.',2:'No se pudo determinar la ubicación.',3:'Tiempo agotado.'};
+    setLocErr(m[err.code]||'Error desconocido.'); if(btn) btn.disabled=false;
+  },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
+}
+function setLocErr(msg){
+  const d=document.getElementById('loc-dot'),s=document.getElementById('loc-status'),c=document.getElementById('loc-card');
+  if(!d) return; d.className='pulse-dot error'; s.className='loc-status error'; s.textContent=msg; c.className='loc-card error';
+}
+
+// ── PAYLOAD & SUCCESS ──────────────────────────────────────────────────────────
+function buildPayload(ts) {
+  const lat_f = gpsLat||ans.lat_manual||null;
+  const lng_f = gpsLng||ans.lng_manual||null;
+  const src = gpsLat?'GPS automático':ans.lat_manual?'Manual':'—';
+  return {
+    timestamp: ts, nombre_estudiante:ans.nombre, grado:ans.grado,
+    franja_manana:ans.franja_manana, franja_tarde:ans.franja_tarde,
+    tiene_nomenclatura:ans.tiene_nomenclatura?'Sí':'No',
+    direccion:ans.tiene_nomenclatura?`${ans.direccion||''}, ${ans.barrio||''}, ${ans.municipio||''}`:null,
+    lat:lat_f, lng:lng_f, precision_gps_m:gpsAcc, fuente_coordenadas:src,
+    tiempo_viaje_min:ans.tiempo_min, distancia_km:ans.km_aprox,
+    modalidad_transporte:ans.modalidad, tipo_combustible:ans.combustible,
+    estudiantes_por_vehiculo:ans.estudiantes_vehiculo,
+    comparte_con_institucion:ans.comparte_institucion,
+    ingresa_bahia:ans.usa_bahia, espera_ingreso_manana:ans.espera_ingreso,
+    espera_salida_tarde:ans.espera_salida, congestion_percibida:ans.congestion,
+    obs_bahia:ans.obs_bahia, interes_ruta_compartida:ans.interes_ruta,
+    usaria_punto_encuentro:ans.punto_encuentro, importancia_huella:ans.importancia_huella,
+    comentarios:ans.comentarios,
+  };
+}
+
+function renderSuccess() {
+  const ts = new Date().toLocaleString('es-CO',{dateStyle:'long',timeStyle:'short'});
+  const pl = buildPayload(ts);
+  const json = JSON.stringify(pl,null,2);
+  const lat_f = gpsLat||ans.lat_manual, lng_f = gpsLng||ans.lng_manual;
+  return `<div class="success-screen">
+    <div class="success-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2dce89" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <h2>¡Encuesta registrada!</h2>
+    <p>Gracias por participar en el proyecto de Movilidad Escolar Sostenible del Colegio Campestre Horizontes.</p>
+    <div class="data-box" id="json-out">${escHtml(json)}</div>
+    <button class="btn-copy" onclick="copyJson()">Copiar datos</button>
+    <button class="btn-new" onclick="resetAll()">Nueva respuesta</button>
+    ${lat_f?`<br><a class="maps-link" href="https://www.google.com/maps?q=${lat_f},${lng_f}" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      Ver ubicación en Google Maps</a>`:''}
+  </div>`;
+}
+
+function copyJson(){ const t=document.getElementById('json-out').textContent; navigator.clipboard?navigator.clipboard.writeText(t).catch(()=>fb(t)):fb(t); }
+function fb(t){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); document.body.removeChild(a); }
+function showToast(m){ const t=document.getElementById('toast'); t.textContent=m||'Completa los campos obligatorios (*)'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500); }
+function resetAll(){ ans={}; gpsLat=null; gpsLng=null; gpsAcc=null; step=0; render(); }
 
 // ── NAVEGACIÓN ─────────────────────────────────────────────────────────────────
 function goNext() {
-  if (step < STEPS.length - 1) {
-    if (!validate()) { showToast('Por favor completa los campos obligatorios (*)'); return; }
-    step++;
-    render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  if(!validate()){ showToast('Completa los campos obligatorios (*) para continuar.'); return; }
+  step++; render(); window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function goBack() {
-  if (step > 0) { collectFields(); step--; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  collectFields(); step--; render(); window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── RENDER PRINCIPAL ───────────────────────────────────────────────────────────
+// ── RENDER ─────────────────────────────────────────────────────────────────────
 function render() {
   renderSteps();
-  updateProgress();
-
-  const area = document.getElementById('form-area');
-  const nav  = document.getElementById('nav-area');
-  const back = document.getElementById('btn-back');
-  const next = document.getElementById('btn-next');
-  const lbl  = document.getElementById('btn-label');
-
-  if (step === STEPS.length - 1) {
-    // Envío
-    area.innerHTML = '';
-    nav.style.display = 'none';
-    sendForm();
-    return;
-  }
-
-  const renderers = [renderSec1, renderSec2, renderSec3, renderSec4, renderSec5];
-  area.innerHTML = renderers[step]();
-
-  nav.style.display = 'flex';
-  back.style.display = step === 0 ? 'none' : 'block';
-  lbl.textContent = step === STEPS.length - 2 ? 'Enviar encuesta' : 'Continuar';
+  const area=document.getElementById('form-area'), nav=document.getElementById('nav-area');
+  const back=document.getElementById('btn-back'), lbl=document.getElementById('btn-label');
+  if(step===STEPS.length-1){ area.innerHTML=''; nav.style.display='none'; sendForm(); return; }
+  const renderers=[renderSec1,renderSec2,renderSec3,renderSec4,renderSec5];
+  area.innerHTML=renderers[step]();
+  nav.style.display='flex'; back.style.display=step===0?'none':'block';
+  lbl.textContent=step===STEPS.length-2?'Enviar encuesta':'Continuar';
 }
 
-// ── ENVÍO ──────────────────────────────────────────────────────────────────────
 async function sendForm() {
-  const area    = document.getElementById('form-area');
-  const spinner = document.getElementById('spinner');
-
-  area.innerHTML = `<div style="text-align:center;padding:2rem 1rem;color:var(--muted)">
-    <div style="width:40px;height:40px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 1rem"></div>
-    Registrando tus respuestas…
-  </div>`;
-
-  const ts = new Date().toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' });
-  const payload = buildPayload(ts);
-
+  const area=document.getElementById('form-area');
+  area.innerHTML=`<div style="text-align:center;padding:2rem 1rem;color:var(--muted)"><div class="spin-sm"></div>Registrando tus respuestas…</div>`;
+  const ts=new Date().toLocaleString('es-CO',{dateStyle:'long',timeStyle:'short'});
   try {
-    if (SCRIPT_URL && !SCRIPT_URL.includes('TU_URL')) {
-      await fetch(SCRIPT_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-    }
-    area.innerHTML = renderSuccess();
-    document.getElementById('nav-area').style.display = 'none';
-  } catch(err) {
-    area.innerHTML = renderSuccess();
-    document.getElementById('nav-area').style.display = 'none';
-  }
+    if(SCRIPT_URL&&!SCRIPT_URL.includes('TU_URL'))
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildPayload(ts))});
+  } catch(e){}
+  area.innerHTML=renderSuccess();
+  document.getElementById('nav-area').style.display='none';
 }
 
-// ── INICIO ─────────────────────────────────────────────────────────────────────
 render();
 </script>
 </body>
